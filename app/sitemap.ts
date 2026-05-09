@@ -3,24 +3,32 @@ import { connectDB } from "@/lib/mongoose";
 import Product from "@/models/Product";
 import Category from "@/models/Category";
 
+export const dynamic = "force-dynamic";
+
 const BASE_URL = process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  await connectDB();
+  let products: { slug: string; updatedAt: Date }[] = [];
+  let categories: { slug: string; updatedAt: Date }[] = [];
 
-  const [products, categories] = await Promise.all([
-    Product.find({ isAvailable: true }, "slug updatedAt").lean(),
-    Category.find({ isActive: true }, "slug updatedAt").lean(),
-  ]);
+  try {
+    await connectDB();
+    [products, categories] = await Promise.all([
+      Product.find({ isAvailable: true }, "slug updatedAt").lean() as Promise<{ slug: string; updatedAt: Date }[]>,
+      Category.find({ isActive: true }, "slug updatedAt").lean() as Promise<{ slug: string; updatedAt: Date }[]>,
+    ]);
+  } catch {
+    // DB unavailable — return static-only sitemap
+  }
 
-  const productUrls: MetadataRoute.Sitemap = (products as { slug: string; updatedAt: Date }[]).map((p) => ({
+  const productUrls: MetadataRoute.Sitemap = products.map((p) => ({
     url: `${BASE_URL}/product/${p.slug}`,
     lastModified: p.updatedAt,
     changeFrequency: "weekly",
     priority: 0.8,
   }));
 
-  const categoryUrls: MetadataRoute.Sitemap = (categories as { slug: string; updatedAt: Date }[]).map((c) => ({
+  const categoryUrls: MetadataRoute.Sitemap = categories.map((c) => ({
     url: `${BASE_URL}/category/${c.slug}`,
     lastModified: c.updatedAt,
     changeFrequency: "daily",
