@@ -23,7 +23,7 @@ services:
     container_name: freshcart_app
     restart: unless-stopped
     ports:
-      - "3000:3000"
+      - "3002:3000"
     depends_on:
       mongodb:
         condition: service_healthy
@@ -31,9 +31,9 @@ services:
       NODE_ENV: production
       MONGO_URI: mongodb://mongodb:27017/freshcart
       NEXTAUTH_SECRET: ${NEXTAUTH_SECRET:-change-me-run-openssl-rand-base64-32}
-      NEXTAUTH_URL: ${NEXTAUTH_URL:-http://localhost:3000}
+      NEXTAUTH_URL: ${NEXTAUTH_URL:-http://localhost:3002}
       NEXT_PUBLIC_APP_NAME: FreshCart
-      NEXT_PUBLIC_APP_URL: ${NEXTAUTH_URL:-http://localhost:3000}
+      NEXT_PUBLIC_APP_URL: ${NEXTAUTH_URL:-http://localhost:3002}
     # Build (needs MongoDB available for route analysis), seed (idempotent), start
     command: sh -c "npm run build && npm run seed && npm start"
 
