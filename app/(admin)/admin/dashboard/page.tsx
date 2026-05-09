@@ -1,3 +1,4 @@
+export const dynamic = "force-dynamic";
 import { connectDB } from "@/lib/mongoose";
 import Product from "@/models/Product";
 import Order from "@/models/Order";
