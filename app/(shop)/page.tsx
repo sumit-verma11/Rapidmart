@@ -1,19 +1,14 @@
 export const dynamic = "force-dynamic";
 import { Suspense } from "react";
-import Link from "next/link";
-import {
-  ArrowRight, Leaf, Zap, Shield, Clock, Star,
-} from "lucide-react";
+import { Zap, Leaf, Shield, Clock } from "lucide-react";
 import { connectDB } from "@/lib/mongoose";
 import Category from "@/models/Category";
-import AnimatedHeroText from "./_components/AnimatedHeroText";
-import { ClaimOfferButton, ClaimOfferLink, ClaimOfferHeroLink } from "./_components/ClaimOfferButton";
+import HeroSection from "./_components/HeroSection";
+import { ClaimOfferButton, ClaimOfferLink } from "./_components/ClaimOfferButton";
 import ShopSection, { CategoryItem } from "@/components/ShopSection";
 import HomepageRecentlyViewed from "@/components/HomepageRecentlyViewed";
 import JustForYou from "@/components/JustForYou";
 import FlashSaleBanner from "@/components/FlashSaleBanner";
-
-// ─── Server data fetch ────────────────────────────────────────────────────────
 
 async function getCategories(): Promise<CategoryItem[]> {
   await connectDB();
@@ -29,162 +24,68 @@ async function getCategories(): Promise<CategoryItem[]> {
   }));
 }
 
-// ─── Static data ──────────────────────────────────────────────────────────────
-
 const FEATURES = [
-  { icon: Zap,    title: "2-Hour Delivery",   desc: "Order before 12 PM, get same-day delivery" },
-  { icon: Leaf,   title: "100% Fresh",         desc: "Farm-to-doorstep freshness guaranteed" },
-  { icon: Shield, title: "Safe & Hygienic",    desc: "Carefully handled and packed with care" },
-  { icon: Clock,  title: "24/7 Support",       desc: "We&apos;re always here when you need us" },
+  { icon: Zap,    title: "2-Hour Delivery",  desc: "Order before 12 PM for same-day delivery" },
+  { icon: Leaf,   title: "100% Fresh",        desc: "Farm-to-doorstep freshness guaranteed"    },
+  { icon: Shield, title: "Safe & Hygienic",   desc: "Carefully handled and packed with care"   },
+  { icon: Clock,  title: "24/7 Support",      desc: "We're always here when you need us"       },
 ];
-
-// ─── Page ─────────────────────────────────────────────────────────────────────
 
 export default async function HomePage() {
   const categories = await getCategories();
 
   return (
-    <div>
-      {/* ── Hero Banner ──────────────────────────────────────────────────────── */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-primary via-primary-600 to-primary-800">
-        {/* Decorative blobs */}
-        <div className="absolute top-0 right-0 w-96 h-96 bg-white/5 rounded-full
-                        -translate-y-1/2 translate-x-1/3 pointer-events-none" />
-        <div className="absolute bottom-0 left-0 w-64 h-64 bg-secondary/10 rounded-full
-                        translate-y-1/2 -translate-x-1/4 pointer-events-none" />
+    <div className="bg-gray-50">
 
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 lg:py-24">
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
+      {/* ── Hero ──────────────────────────────────────────────────────────────── */}
+      <HeroSection />
 
-            {/* Left: copy */}
-            <div className="text-white">
-              <div className="inline-flex items-center gap-2 bg-white/15 backdrop-blur-sm
-                              text-white text-sm font-semibold px-4 py-1.5 rounded-full mb-6
-                              animate-fade-in">
-                <Leaf className="w-4 h-4" /> Farm Fresh, Delivered Daily
-              </div>
-
-              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold leading-tight
-                             mb-6 animate-fade-in-up">
-                Fresh Groceries{" "}
-                <br className="hidden sm:block" />
-                <AnimatedHeroText />
-              </h1>
-
-              <p className="text-white/80 text-lg mb-8 max-w-md animate-fade-in-up delay-100">
-                Premium quality fruits, vegetables, dairy, and more — delivered fresh
-                to your doorstep. Free delivery on orders above ₹499.
-              </p>
-
-              <div className="flex flex-wrap gap-4 animate-fade-in-up delay-200">
-                <Link
-                  href="#shop"
-                  className="inline-flex items-center gap-2 bg-white text-primary font-bold
-                             px-7 py-3.5 rounded-xl hover:bg-gray-50 active:scale-95
-                             transition-all duration-200 shadow-lg shadow-black/10"
-                >
-                  Shop Now <ArrowRight className="w-4 h-4" />
-                </Link>
-                <ClaimOfferHeroLink />
-              </div>
-
-              {/* Social proof */}
-              <div className="flex items-center gap-8 mt-10 animate-fade-in-up delay-300">
-                {[
-                  ["50K+", "Happy Customers"],
-                  ["99%",  "Fresh Guarantee"],
-                  ["4.8★", "App Rating"],
-                ].map(([val, label]) => (
-                  <div key={label}>
-                    <p className="text-2xl font-extrabold text-white">{val}</p>
-                    <p className="text-xs text-white/60 mt-0.5">{label}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Right: visual */}
-            <div className="hidden lg:flex items-center justify-center animate-fade-in delay-200">
-              <div className="relative">
-                {/* Main circle */}
-                <div className="w-80 h-80 rounded-full bg-white/10 backdrop-blur-sm
-                                flex items-center justify-center text-9xl shadow-2xl border border-white/20">
-                  🛒
-                </div>
-
-                {/* Floating cards */}
-                <div className="absolute -bottom-6 -left-8 bg-white rounded-2xl px-4 py-3
-                                shadow-xl border border-border animate-fade-in-up delay-400">
-                  <div className="flex items-center gap-3">
-                    <div className="w-9 h-9 bg-success/10 rounded-xl flex items-center justify-center">
-                      <Star className="w-5 h-5 text-success fill-success" />
-                    </div>
-                    <div>
-                      <p className="font-bold text-dark text-sm">Trusted by 50K+ families</p>
-                      <p className="text-xs text-muted">across major cities</p>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="absolute -top-4 -right-6 bg-white rounded-2xl px-4 py-3
-                                shadow-xl border border-border animate-fade-in-up delay-500">
-                  <div className="flex items-center gap-2">
-                    <span className="text-2xl">🥦</span>
-                    <div>
-                      <p className="font-bold text-dark text-xs">Organic Veggies</p>
-                      <p className="text-xs text-success font-semibold">Just arrived!</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
+      {/* ── Offer ticker ──────────────────────────────────────────────────────── */}
+      <div className="bg-gradient-to-r from-amber-50 to-yellow-50 border-b border-amber-100 py-2.5">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-sm font-medium text-amber-800">
+          🎉 New user offer: Get{" "}
+          <span className="font-extrabold text-amber-600">₹100 OFF</span> your first order
+          with code{" "}
+          <code className="rounded-lg bg-amber-100 px-2 py-0.5 font-mono font-bold text-amber-700">
+            FRESH100
+          </code>
+          {" "}· Min ₹299{" "}
+          <ClaimOfferLink />
         </div>
-      </section>
+      </div>
 
-      {/* ── Features strip ───────────────────────────────────────────────────── */}
-      <section className="bg-white border-b border-border">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-8">
+      {/* ── Features strip ────────────────────────────────────────────────────── */}
+      <div className="bg-white border-b border-gray-100 shadow-sm">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
             {FEATURES.map(({ icon: Icon, title, desc }) => (
-              <div key={title} className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-accent rounded-xl flex items-center justify-center shrink-0">
-                  <Icon className="w-5 h-5 text-primary" />
+              <div key={title}
+                className="group flex items-center gap-3 rounded-2xl p-3 transition-colors
+                           duration-200 hover:bg-emerald-50"
+              >
+                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl
+                                bg-emerald-50 text-primary transition-colors duration-200
+                                group-hover:bg-emerald-100">
+                  <Icon className="h-5 w-5" />
                 </div>
                 <div>
-                  <p className="font-semibold text-dark text-sm">{title}</p>
-                  <p className="text-xs text-muted mt-0.5 leading-tight"
-                     dangerouslySetInnerHTML={{ __html: desc }} />
+                  <p className="text-sm font-semibold text-gray-900">{title}</p>
+                  <p className="mt-0.5 text-xs leading-tight text-gray-500">{desc}</p>
                 </div>
               </div>
             ))}
           </div>
         </div>
-      </section>
+      </div>
 
-      {/* ── Promo strip ──────────────────────────────────────────────────────── */}
-      <section className="bg-secondary/10 border-b border-secondary/20 py-3">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <p className="text-sm font-semibold text-dark">
-            🎉 New user offer: Get <span className="text-secondary font-extrabold">₹100 OFF</span> your
-            first order with code{" "}
-            <code className="bg-secondary/20 text-secondary font-mono px-2 py-0.5 rounded-lg font-bold">
-              FRESH100
-            </code>
-            {" "}· Min order ₹299{" "}
-            <ClaimOfferLink />
-          </p>
-        </div>
-      </section>
-
-      {/* ── Flash sale banner (client, live countdown) ───────────────────────── */}
+      {/* ── Flash sale (live countdown) ───────────────────────────────────────── */}
       <FlashSaleBanner />
 
-      {/* ── Recently viewed (client, reads localStorage) ─────────────────────── */}
+      {/* ── Recently viewed ───────────────────────────────────────────────────── */}
       <HomepageRecentlyViewed />
 
-      {/* ── Shop section (categories + filters + product grid) ───────────────── */}
-      <div id="shop">
+      {/* ── Shop section ──────────────────────────────────────────────────────── */}
+      <div id="shop" className="pt-2">
         <Suspense
           fallback={
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
@@ -193,26 +94,17 @@ export default async function HomePage() {
                   <div key={i} className="skeleton h-10 w-32 rounded-2xl shrink-0" />
                 ))}
               </div>
-              <div className="flex gap-8">
-                <div className="hidden lg:block w-64 shrink-0">
-                  <div className="card p-5 space-y-4">
-                    {Array.from({ length: 5 }).map((_, i) => (
-                      <div key={i} className="skeleton h-4 rounded" style={{ width: `${60 + i * 8}%` }} />
-                    ))}
-                  </div>
-                </div>
-                <div className="flex-1 grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-4 gap-4">
-                  {Array.from({ length: 8 }).map((_, i) => (
-                    <div key={i} className="card overflow-hidden">
-                      <div className="skeleton aspect-square" />
-                      <div className="p-3 space-y-2">
-                        <div className="skeleton h-3 w-16 rounded" />
-                        <div className="skeleton h-4 rounded" />
-                        <div className="skeleton h-3 w-20 rounded" />
-                      </div>
+              <div className="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-4 gap-4">
+                {Array.from({ length: 8 }).map((_, i) => (
+                  <div key={i} className="card overflow-hidden">
+                    <div className="skeleton aspect-square" />
+                    <div className="p-3 space-y-2">
+                      <div className="skeleton h-3 w-16 rounded" />
+                      <div className="skeleton h-4 rounded" />
+                      <div className="skeleton h-3 w-20 rounded" />
                     </div>
-                  ))}
-                </div>
+                  </div>
+                ))}
               </div>
             </div>
           }
@@ -221,35 +113,34 @@ export default async function HomePage() {
         </Suspense>
       </div>
 
-      {/* ── Just For You personalised section ───────────────────────────────── */}
+      {/* ── Just For You ──────────────────────────────────────────────────────── */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-4">
         <JustForYou />
       </div>
 
-      {/* ── Promo banner ─────────────────────────────────────────────────────── */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14">
-        <div className="relative bg-gradient-to-r from-primary to-primary-700 rounded-3xl
-                        overflow-hidden p-8 lg:p-12">
-          {/* Decorative circles */}
-          <div className="absolute right-0 top-0 w-72 h-72 bg-white/5 rounded-full
-                          translate-x-1/3 -translate-y-1/3 pointer-events-none" />
-          <div className="absolute left-1/2 bottom-0 w-48 h-48 bg-secondary/10 rounded-full
-                          translate-y-1/2 pointer-events-none" />
+      {/* ── Promo banner ──────────────────────────────────────────────────────── */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br
+                        from-[#0f4c2a] via-[#1A6B3A] to-[#1e7d43] p-8 lg:p-12 shadow-xl">
+          {/* Orbs */}
+          <div className="pointer-events-none absolute -right-16 -top-16 h-64 w-64
+                          rounded-full bg-white/5 blur-2xl" />
+          <div className="pointer-events-none absolute -bottom-12 left-1/3 h-48 w-48
+                          rounded-full bg-yellow-400/10 blur-2xl" />
 
           <div className="relative flex flex-col lg:flex-row items-start lg:items-center
                           justify-between gap-8">
             <div className="text-white">
-              <p className="text-secondary font-bold text-sm uppercase tracking-wide mb-2">
-                Limited Time Offer
+              <p className="mb-2 text-xs font-bold uppercase tracking-widest text-yellow-300">
+                ✦ Limited Time Offer
               </p>
-              <h2 className="text-3xl lg:text-4xl font-extrabold mb-3 leading-tight">
+              <h2 className="mb-3 text-3xl font-extrabold leading-tight lg:text-4xl">
                 Get ₹100 Off
-                <br />
-                Your First Order!
+                <br />Your First Order!
               </h2>
-              <p className="text-white/75 text-sm max-w-md">
+              <p className="max-w-md text-sm text-white/70">
                 Use code{" "}
-                <span className="font-bold text-secondary bg-black/10 px-2 py-0.5 rounded-lg">
+                <span className="rounded-lg bg-white/10 px-2 py-0.5 font-mono font-bold text-yellow-300">
                   FRESH100
                 </span>{" "}
                 at checkout. Min. order ₹299. Valid for new users only.
@@ -259,6 +150,7 @@ export default async function HomePage() {
           </div>
         </div>
       </section>
+
     </div>
   );
 }

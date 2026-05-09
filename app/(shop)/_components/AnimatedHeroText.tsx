@@ -1,5 +1,6 @@
 "use client";
 
+import { AnimatePresence, motion } from "framer-motion";
 import { useState, useEffect } from "react";
 
 const PHRASES = [
@@ -11,28 +12,28 @@ const PHRASES = [
 
 export default function AnimatedHeroText() {
   const [idx, setIdx] = useState(0);
-  const [visible, setVisible] = useState(true);
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      setVisible(false);
-      setTimeout(() => {
-        setIdx((i) => (i + 1) % PHRASES.length);
-        setVisible(true);
-      }, 300);
-    }, 3000);
-    return () => clearInterval(interval);
+    const id = setInterval(() => {
+      setIdx((i) => (i + 1) % PHRASES.length);
+    }, 2800);
+    return () => clearInterval(id);
   }, []);
 
   return (
-    <span
-      className="text-secondary inline-block transition-all duration-300"
-      style={{
-        opacity:   visible ? 1 : 0,
-        transform: visible ? "translateY(0)" : "translateY(8px)",
-      }}
-    >
-      {PHRASES[idx]}
+    <span className="relative inline-block overflow-hidden align-bottom h-[1.15em] w-full">
+      <AnimatePresence mode="wait">
+        <motion.span
+          key={idx}
+          className="absolute left-0 text-secondary whitespace-nowrap"
+          initial={{ y: 40, opacity: 0, filter: "blur(8px)" }}
+          animate={{ y: 0,  opacity: 1, filter: "blur(0px)" }}
+          exit={{    y: -40, opacity: 0, filter: "blur(8px)" }}
+          transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
+        >
+          {PHRASES[idx]}
+        </motion.span>
+      </AnimatePresence>
     </span>
   );
 }
