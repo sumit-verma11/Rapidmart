@@ -1,6 +1,6 @@
 {
-  "name": "RapidMart — Premium Online Grocery",
-  "short_name": "RapidMart",
+  "name": "FreshCart — Premium Online Grocery",
+  "short_name": "FreshCart",
   "description": "Fresh groceries delivered to your doorstep. Shop fruits, vegetables, dairy & more.",
   "start_url": "/",
   "scope": "/",

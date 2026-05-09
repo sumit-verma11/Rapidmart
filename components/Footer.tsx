@@ -189,11 +189,11 @@ export default function Footer() {
               </li>
               <li>
                 <a
-                  href="mailto:support@rapidmart.in"
+                  href="mailto:support@freshcart.in"
                   className="flex items-center gap-3 text-sm text-gray-400 hover:text-white transition-colors"
                 >
                   <Mail className="w-4 h-4 text-secondary shrink-0" />
-                  support@rapidmart.in
+                  support@freshcart.in
                 </a>
               </li>
             </ul>
@@ -224,7 +224,7 @@ export default function Footer() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5
                         flex flex-col sm:flex-row items-center justify-between gap-3
                         text-xs text-gray-500">
-          <p>© {new Date().getFullYear()} RapidMart. All rights reserved.</p>
+          <p>© {new Date().getFullYear()} FreshCart. All rights reserved.</p>
           <div className="flex items-center gap-4">
             <span>Made with 💚 in India</span>
             <span className="text-gray-700">·</span>

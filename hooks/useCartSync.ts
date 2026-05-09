@@ -32,7 +32,7 @@ export function useCartSync() {
 
   // ── BroadcastChannel: instant cross-tab sync (same device) ─────────────────
   useEffect(() => {
-    const bc = new BroadcastChannel("rapidmart-cart");
+    const bc = new BroadcastChannel("freshcart-cart");
     bc.onmessage = (e: MessageEvent<{ from: string; items: IClientCartItem[] }>) => {
       if (e.data.from !== clientId.current) {
         setItems(e.data.items);
@@ -49,7 +49,7 @@ export function useCartSync() {
 
     // BroadcastChannel (instant, works offline too)
     try {
-      const bc = new BroadcastChannel("rapidmart-cart");
+      const bc = new BroadcastChannel("freshcart-cart");
       bc.postMessage({ from: clientId.current, items });
       bc.close();
     } catch { /* SSR guard */ }

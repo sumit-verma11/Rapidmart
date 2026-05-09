@@ -15,8 +15,8 @@ export const viewport: Viewport = {
 
 export const metadata: Metadata = {
   title: {
-    default:  "RapidMart — Premium Online Grocery",
-    template: "%s | RapidMart",
+    default:  "FreshCart — Premium Online Grocery",
+    template: "%s | FreshCart",
   },
   description:
     "Fresh groceries delivered to your doorstep. Shop fruits, vegetables, dairy, bakery, beverages, snacks & more.",
@@ -25,7 +25,7 @@ export const metadata: Metadata = {
   appleWebApp: {
     capable:         true,
     statusBarStyle:  "default",
-    title:           "RapidMart",
+    title:           "FreshCart",
   },
   formatDetection: { telephone: false },
   icons: {
@@ -36,7 +36,7 @@ export const metadata: Metadata = {
     apple: [{ url: "/icons/apple-touch-icon.png", sizes: "180x180", type: "image/png" }],
   },
   openGraph: {
-    title:       "RapidMart — Premium Online Grocery",
+    title:       "FreshCart — Premium Online Grocery",
     description: "Fresh groceries delivered to your doorstep.",
     type:        "website",
   },

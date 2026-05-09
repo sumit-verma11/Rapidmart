@@ -17,7 +17,7 @@ const TEMPLATES: Template[] = [
     icon:  <Truck className="w-4 h-4" />,
     label: "Out for Delivery",
     title: "Your order is out for delivery! 🛵",
-    body:  "Your RapidMart order is on its way. Track it in the app.",
+    body:  "Your FreshCart order is on its way. Track it in the app.",
     url:   "/orders",
     tag:   "delivery",
   },

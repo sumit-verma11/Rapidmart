@@ -105,7 +105,7 @@ export default function AddProductPage() {
   return (
     <div className="max-w-3xl">
       <h1 className="text-2xl font-bold text-dark mb-2">Add New Product</h1>
-      <p className="text-muted text-sm mb-8">Fill in the details below to add a product to RapidMart.</p>
+      <p className="text-muted text-sm mb-8">Fill in the details below to add a product to FreshCart.</p>
 
       <form onSubmit={handleSubmit} className="space-y-6">
         {/* Basic info */}

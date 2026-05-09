@@ -24,7 +24,7 @@ export async function connectDB(): Promise<typeof mongoose> {
     cached.promise = mongoose
       .connect(MONGO_URI, {
         bufferCommands: false,
-        dbName: "rapidmart",
+        dbName: "freshcart",
       })
       .then((m) => {
         console.log("✅ MongoDB connected");

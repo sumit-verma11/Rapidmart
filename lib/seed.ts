@@ -1,5 +1,5 @@
 /**
- * RapidMart Seed Script — complete rewrite
+ * FreshCart Seed Script — complete rewrite
  * Populates MongoDB with realistic Indian grocery data.
  * Idempotent: skips if products already exist.
  *
@@ -12,7 +12,7 @@ import bcrypt from "bcryptjs";
 
 const MONGO_URI =
   process.env.MONGO_URI ??
-  "mongodb://rapidmart_admin:rapidmart_secret@localhost:27017/rapidmart?authSource=admin";
+  "mongodb://freshcart_admin:freshcart_secret@localhost:27017/freshcart?authSource=admin";
 
 // ─── Inline schemas (mirrors production models exactly) ───────────────────────
 
@@ -133,9 +133,9 @@ const PINCODE_CODES = PINCODES.map((p) => p.pincode);
 // ─── User seed data ───────────────────────────────────────────────────────────
 
 const USERS_SEED = [
-  { name: "Admin User",    email: "admin@rapidmart.com",         password: "Admin@123",  role: "admin", phone: "9876543210" },
-  { name: "Sumit",         email: "sumit_admin@rapidmart.com",   password: "me@11July",  role: "admin", phone: "9876543212" },
-  { name: "Test User",     email: "user@rapidmart.com",          password: "User@123",   role: "user",  phone: "9876543211" },
+  { name: "Admin User",    email: "admin@freshcart.com",         password: "Admin@123",  role: "admin", phone: "9876543210" },
+  { name: "Sumit",         email: "sumit_admin@freshcart.com",   password: "me@11July",  role: "admin", phone: "9876543212" },
+  { name: "Test User",     email: "user@freshcart.com",          password: "User@123",   role: "user",  phone: "9876543211" },
   { name: "Arjun Mehta",  email: "arjun@example.com",           password: "Arjun@123",  role: "user",  phone: "9876001001" },
   { name: "Sunita Patel", email: "sunita@example.com",          password: "Sunita@123", role: "user",  phone: "9876001002" },
   { name: "Vikram Nair",  email: "vikram@example.com",          password: "Vikram@123", role: "user",  phone: "9876001003" },
@@ -985,7 +985,7 @@ const UNAVAILABLE_INDICES = new Set([3, 12, 17, 22, 28, 36, 38, 44, 47, 49]);
 // ─── Main seed function ───────────────────────────────────────────────────────
 
 export async function runSeed(): Promise<void> {
-  console.log("🥕 RapidMart Seed Script");
+  console.log("🥕 FreshCart Seed Script");
   console.log("─".repeat(50));
 
   await mongoose.connect(MONGO_URI);
@@ -1085,11 +1085,11 @@ export async function runSeed(): Promise<void> {
   console.log(`✅ Seeded ${productsToInsert.length} products`);
 
   await mongoose.disconnect();
-  console.log("\n🎉 RapidMart seeded successfully!");
+  console.log("\n🎉 FreshCart seeded successfully!");
   console.log("─".repeat(50));
-  console.log("Admin : admin@rapidmart.com       / Admin@123");
-  console.log("Admin : sumit_admin@rapidmart.com / me@11July");
-  console.log("User  : user@rapidmart.com        / User@123");
+  console.log("Admin : admin@freshcart.com       / Admin@123");
+  console.log("Admin : sumit_admin@freshcart.com / me@11July");
+  console.log("User  : user@freshcart.com        / User@123");
 }
 
 /** Backward-compat alias */

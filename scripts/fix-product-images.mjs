@@ -14,7 +14,7 @@ import mongoose from "mongoose";
 
 const MONGO_URI =
   process.env.MONGO_URI ??
-  "mongodb://rapidmart_admin:rapidmart_secret@localhost:27017/rapidmart?authSource=admin";
+  "mongodb://freshcart_admin:freshcart_secret@localhost:27017/freshcart?authSource=admin";
 
 const DRY_RUN = process.argv.includes("--dry-run");
 
@@ -52,7 +52,7 @@ const Product =
   mongoose.models.Product ?? mongoose.model("Product", ProductSchema);
 
 async function main() {
-  console.log(`🖼  RapidMart — Fix Product Images${DRY_RUN ? " [DRY RUN]" : ""}`);
+  console.log(`🖼  FreshCart — Fix Product Images${DRY_RUN ? " [DRY RUN]" : ""}`);
   console.log("─".repeat(50));
 
   await mongoose.connect(MONGO_URI);

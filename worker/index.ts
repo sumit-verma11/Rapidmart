@@ -22,12 +22,12 @@ sw.addEventListener("push", (event: PushEvent) => {
     tag?: string;
   }) ?? {};
 
-  const title = data.title ?? "RapidMart";
+  const title = data.title ?? "FreshCart";
   const options: NotificationOptions = {
     body:  data.body  ?? "You have a new update.",
     icon:  "/icons/icon-192.png",
     badge: "/icons/icon-192.png",
-    tag:   data.tag   ?? "rapidmart-notification",
+    tag:   data.tag   ?? "freshcart-notification",
     data:  { url: data.url ?? "/" },
   };
 

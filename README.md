@@ -1,4 +1,4 @@
-# RapidMart
+# FreshCart
 
 A full-stack grocery e-commerce application built with **Next.js 14**, **MongoDB**, and **Tailwind CSS**.
 
@@ -75,8 +75,8 @@ npm run dev
 
 | Role  | Email                    | Password   |
 |-------|--------------------------|------------|
-| Admin | admin@rapidmart.com      | Admin@123  |
-| User  | user@rapidmart.com       | User@123   |
+| Admin | admin@freshcart.com      | Admin@123  |
+| User  | user@freshcart.com       | User@123   |
 | User  | arjun@example.com        | Arjun@123  |
 | User  | sunita@example.com       | Sunita@123 |
 | User  | vikram@example.com       | Vikram@123 |
@@ -160,7 +160,7 @@ Admin panel: **http://localhost:3000/admin**
 | `MONGO_URI`            | Yes      | MongoDB connection string                |
 | `NEXTAUTH_SECRET`      | Yes      | Random secret for JWT signing            |
 | `NEXTAUTH_URL`         | Yes      | Canonical app URL                        |
-| `NEXT_PUBLIC_APP_NAME` | No       | Display name (default: RapidMart)        |
+| `NEXT_PUBLIC_APP_NAME` | No       | Display name (default: FreshCart)        |
 | `NEXT_PUBLIC_APP_URL`  | No       | Public URL (baked in at build time)      |
 
 > **Note:** `NEXT_PUBLIC_*` variables are baked into the Next.js build. If you change them, rebuild the Docker image.
@@ -183,7 +183,7 @@ npm run docker:down  # Stop and remove containers
 ## Project Structure
 
 ```
-rapidmart/
+freshcart/
 ├── app/
 │   ├── (admin)/         # Admin panel pages + API
 │   ├── (auth)/          # Login & register
