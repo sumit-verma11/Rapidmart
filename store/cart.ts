@@ -67,6 +67,6 @@ export const useCartStore = create<CartState>()(
 
       total: () => get().subtotal() + get().deliveryCharge(),
     }),
-    { name: "freshcart-cart" }
+    { name: "rapidmart-cart" }
   )
 );

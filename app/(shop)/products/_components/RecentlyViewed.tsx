@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import ProductCard from "@/components/ProductCard";
 import { IProduct } from "@/types";
 
-const STORAGE_KEY = "freshcart-recently-viewed";
+const STORAGE_KEY = "rapidmart-recently-viewed";
 const MAX_STORED  = 10;
 const MAX_SHOWN   = 4;
 

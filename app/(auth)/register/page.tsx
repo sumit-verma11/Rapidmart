@@ -84,7 +84,7 @@ export default function RegisterPage() {
       });
 
       if (loginRes?.ok) {
-        toast.success("Account created! Welcome to FreshCart 🎉");
+        toast.success("Account created! Welcome to RapidMart 🎉");
         router.push("/");
         router.refresh();
       } else {
@@ -117,7 +117,7 @@ export default function RegisterPage() {
 
         <div className="text-center mb-7">
           <h1 className="text-2xl font-bold text-dark">Create account</h1>
-          <p className="text-muted text-sm mt-1">Join FreshCart and shop fresh today</p>
+          <p className="text-muted text-sm mt-1">Join RapidMart and shop fresh today</p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">

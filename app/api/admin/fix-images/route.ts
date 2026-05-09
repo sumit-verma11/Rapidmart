@@ -56,7 +56,7 @@ export async function POST(req: NextRequest) {
     const query = encodeURIComponent(keywords);
     const res = await fetch(
       `https://source.unsplash.com/featured/600x600/?${query}`,
-      { redirect: "follow", headers: { "User-Agent": "FreshCart/1.0" } }
+      { redirect: "follow", headers: { "User-Agent": "RapidMart/1.0" } }
     );
 
     const match = res.url.match(/^https:\/\/images\.unsplash\.com\/photo-[^?]+/);

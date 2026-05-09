@@ -23,6 +23,6 @@ export const usePincodeStore = create<PincodeState>()(
       setPincode: (info) => set({ info }),
       clearPincode: () => set({ info: null }),
     }),
-    { name: "freshcart-pincode" }
+    { name: "rapidmart-pincode" }
   )
 );
