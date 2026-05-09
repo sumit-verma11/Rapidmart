@@ -1,12 +1,20 @@
 import webpush from "web-push";
 
-// Initialize VAPID details once at module load
-// NEXT_PUBLIC_VAPID_PUBLIC_KEY is safe to expose (it's the public key)
-webpush.setVapidDetails(
-  process.env.VAPID_SUBJECT    ?? "mailto:admin@freshcart.in",
-  process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY ?? "",
-  process.env.VAPID_PRIVATE_KEY            ?? ""
-);
+let vapidConfigured = false;
+
+function ensureVapidConfigured(): boolean {
+  if (vapidConfigured) return true;
+  const publicKey  = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY;
+  const privateKey = process.env.VAPID_PRIVATE_KEY;
+  if (!publicKey || !privateKey) return false;
+  webpush.setVapidDetails(
+    process.env.VAPID_SUBJECT ?? "mailto:admin@freshcart.in",
+    publicKey,
+    privateKey
+  );
+  vapidConfigured = true;
+  return true;
+}
 
 export interface PushPayload {
   title: string;
@@ -30,6 +38,10 @@ export async function sendPushNotification(
   subscription: PushSubscriptionKeys,
   payload:       PushPayload
 ): Promise<boolean> {
+  if (!ensureVapidConfigured()) {
+    console.warn("[webpush] VAPID keys are not configured; skipping push send.");
+    return false;
+  }
   try {
     await webpush.sendNotification(subscription, JSON.stringify(payload));
     return true;

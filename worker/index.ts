@@ -1,3 +1,4 @@
+/// <reference lib="webworker" />
 /**
  * Custom service worker additions — merged into the Workbox-generated SW by next-pwa.
  *
@@ -6,18 +7,20 @@
  * - Notification click navigation (notificationclick event)
  */
 
-declare let self: ServiceWorkerGlobalScope;
+export {};
+
+const sw = self as unknown as ServiceWorkerGlobalScope;
 
 // ─── Push event ─────────────────────────────────────────────────────────────
 // Receives payloads sent via web-push (VAPID) and shows a system notification.
 
-self.addEventListener("push", (event) => {
-  const data = event.data?.json() as {
+sw.addEventListener("push", (event: PushEvent) => {
+  const data = (event.data?.json() as {
     title?: string;
     body?: string;
     url?: string;
     tag?: string;
-  } ?? {};
+  }) ?? {};
 
   const title = data.title ?? "FreshCart";
   const options: NotificationOptions = {
@@ -26,31 +29,29 @@ self.addEventListener("push", (event) => {
     badge: "/icons/icon-192.png",
     tag:   data.tag   ?? "freshcart-notification",
     data:  { url: data.url ?? "/" },
-    // Show even if another notification with same tag is pending
-    renotify: true,
   };
 
-  event.waitUntil(self.registration.showNotification(title, options));
+  event.waitUntil(sw.registration.showNotification(title, options));
 });
 
 // ─── Notification click ──────────────────────────────────────────────────────
 // Focus an existing window on the target URL, or open a new one.
 
-self.addEventListener("notificationclick", (event) => {
+sw.addEventListener("notificationclick", (event: NotificationEvent) => {
   event.notification.close();
 
   const targetUrl: string = (event.notification.data as { url?: string })?.url ?? "/";
 
   event.waitUntil(
-    clients
+    sw.clients
       .matchAll({ type: "window", includeUncontrolled: true })
       .then((windowClients) => {
         for (const client of windowClients) {
           if (client.url === targetUrl && "focus" in client) {
-            return client.focus();
+            return (client as WindowClient).focus();
           }
         }
-        return clients.openWindow(targetUrl);
+        return sw.clients.openWindow(targetUrl);
       })
   );
 });
