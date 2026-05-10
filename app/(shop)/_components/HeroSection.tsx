@@ -2,167 +2,108 @@
 
 import { motion } from "framer-motion";
 import Link from "next/link";
-import { ArrowRight, Tag } from "lucide-react";
+import { ArrowRight, Tag, Zap } from "lucide-react";
 import AnimatedHeroText from "./AnimatedHeroText";
-import { ClaimOfferHeroLink } from "./ClaimOfferButton";
-
-const GRID_ITEMS = [
-  { emoji: "🥑", name: "Avocado",      bg: "bg-green-900/60"  },
-  { emoji: "🍓", name: "Strawberry",   bg: "bg-rose-900/60"   },
-  { emoji: "🥛", name: "Milk",         bg: "bg-blue-900/60"   },
-  { emoji: "🫐", name: "Blueberry",    bg: "bg-indigo-900/60" },
-  { emoji: "🍋", name: "Lemon",        bg: "bg-yellow-900/60" },
-  { emoji: "🥦", name: "Broccoli",     bg: "bg-emerald-900/60"},
-  { emoji: "🍅", name: "Tomato",       bg: "bg-red-900/60"    },
-  { emoji: "🫚", name: "Olive Oil",    bg: "bg-amber-900/60"  },
-  { emoji: "🧀", name: "Cheese",       bg: "bg-orange-900/60" },
-];
-
-const STATS = [
-  { val: "50K+", label: "Customers"  },
-  { val: "2hr",  label: "Delivery"   },
-  { val: "99%",  label: "Freshness"  },
-  { val: "₹0",   label: "Min. Order" },
-];
 
 export default function HeroSection() {
   return (
     <section className="relative bg-[#070f09] overflow-hidden">
-
-      {/* Subtle noise texture */}
-      <div
-        className="pointer-events-none absolute inset-0 opacity-[0.03]"
-        style={{
-          backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")`,
-          backgroundSize: "200px 200px",
-        }}
-      />
-
-      {/* Green glow top-left */}
-      <div className="pointer-events-none absolute -top-32 -left-32 h-96 w-96 rounded-full bg-emerald-600/20 blur-3xl" />
-      {/* Amber glow bottom-right */}
-      <div className="pointer-events-none absolute bottom-0 right-0 h-64 w-64 rounded-full bg-amber-500/10 blur-3xl" />
+      {/* Glow blobs */}
+      <div className="pointer-events-none absolute -top-16 -left-16 h-48 w-48 rounded-full bg-emerald-600/25 blur-3xl" />
+      <div className="pointer-events-none absolute top-0 right-1/3 h-32 w-64 rounded-full bg-emerald-400/10 blur-2xl" />
 
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid lg:grid-cols-2 min-h-0 gap-0">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 py-7 sm:py-8">
 
-          {/* ── Left: Copy ─────────────────────────────────── */}
-          <div className="flex flex-col justify-center py-14 lg:py-20 lg:pr-12">
-
+          {/* Left — copy */}
+          <div className="flex flex-col gap-3">
             {/* Offer pill */}
             <motion.div
-              initial={{ opacity: 0, x: -20 }}
+              initial={{ opacity: 0, x: -16 }}
               animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.5 }}
-              className="mb-6 inline-flex items-center gap-2 self-start rounded-full
+              transition={{ duration: 0.45 }}
+              className="inline-flex items-center gap-2 self-start rounded-full
                          bg-emerald-500/15 border border-emerald-500/30
-                         px-4 py-1.5 text-sm font-bold text-emerald-400"
+                         px-3 py-1 text-xs font-bold text-emerald-400"
             >
-              <Tag className="h-3.5 w-3.5" />
-              ₹100 off your first order · Code: FRESH100
+              <Tag className="h-3 w-3" />
+              ₹100 off first order · FRESH100
             </motion.div>
 
             {/* Headline */}
             <motion.div
-              initial={{ opacity: 0, y: 30 }}
+              initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.7, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
+              transition={{ duration: 0.55, delay: 0.08, ease: [0.22, 1, 0.36, 1] }}
+              className="flex flex-wrap items-baseline gap-x-3 gap-y-1"
             >
-              <h1 className="text-5xl sm:text-6xl lg:text-7xl font-black leading-[0.95] tracking-tight text-white mb-2">
-                FRESH
+              <h1 className="text-3xl sm:text-4xl font-black text-white leading-none tracking-tight">
+                Fresh Groceries
               </h1>
-              <h1 className="text-5xl sm:text-6xl lg:text-7xl font-black leading-[0.95] tracking-tight text-emerald-400 mb-2">
-                GROCERIES
-              </h1>
-              <h1 className="text-5xl sm:text-6xl lg:text-7xl font-black leading-[0.95] tracking-tight text-white/30 mb-6">
+              <span className="text-2xl sm:text-3xl font-black text-emerald-400 leading-none">
                 <AnimatedHeroText />
-              </h1>
+              </span>
             </motion.div>
 
+            {/* Sub */}
             <motion.p
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.25 }}
-              className="mb-8 max-w-sm text-white/50 text-base leading-relaxed"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.5, delay: 0.18 }}
+              className="text-sm text-white/45 max-w-sm leading-relaxed"
             >
-              Farm-to-door delivery in under 2 hours.
-              50,000+ happy customers across the city.
+              Farm-to-door in under 2 hours · Free delivery above{" "}
+              <span className="text-yellow-400 font-semibold">₹499</span>
             </motion.p>
+          </div>
 
-            {/* CTAs */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.35 }}
-              className="flex flex-wrap items-center gap-3 mb-10"
-            >
+          {/* Right — CTAs + stats */}
+          <motion.div
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.55, delay: 0.15 }}
+            className="flex flex-col gap-3 sm:items-end shrink-0"
+          >
+            <div className="flex items-center gap-2.5 flex-wrap">
               <Link
                 href="#shop"
-                className="group inline-flex items-center gap-2 rounded-2xl
+                className="group inline-flex items-center gap-2 rounded-xl
                            bg-emerald-500 hover:bg-emerald-400 text-white
-                           font-bold px-8 py-4 text-base
-                           shadow-lg shadow-emerald-900/50
+                           font-bold px-5 py-2.5 text-sm
+                           shadow-lg shadow-emerald-900/40
                            transition-all duration-200 hover:-translate-y-0.5 active:scale-95"
               >
                 Shop Now
-                <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
+                <ArrowRight className="h-3.5 w-3.5 group-hover:translate-x-0.5 transition-transform" />
               </Link>
-              <ClaimOfferHeroLink />
-            </motion.div>
+              <Link
+                href="/register"
+                className="inline-flex items-center gap-1.5 rounded-xl
+                           border border-white/20 hover:border-white/40
+                           text-white/70 hover:text-white
+                           font-semibold px-5 py-2.5 text-sm
+                           transition-all duration-200 hover:bg-white/5"
+              >
+                <Zap className="h-3.5 w-3.5 text-yellow-400" />
+                Claim ₹100 Off
+              </Link>
+            </div>
 
-            {/* Stats row */}
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.8, delay: 0.5 }}
-              className="flex items-center gap-6 flex-wrap"
-            >
-              {STATS.map(({ val, label }, i) => (
-                <motion.div
-                  key={label}
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.5 + i * 0.06 }}
-                >
-                  <p className="text-xl font-black text-white">{val}</p>
-                  <p className="text-xs text-white/40 font-medium mt-0.5">{label}</p>
-                </motion.div>
+            {/* Compact stats */}
+            <div className="flex items-center gap-4">
+              {[["50K+","Customers"],["2hr","Delivery"],["99%","Fresh"]].map(([v,l]) => (
+                <div key={l} className="text-center">
+                  <p className="text-sm font-black text-white">{v}</p>
+                  <p className="text-[10px] text-white/35">{l}</p>
+                </div>
               ))}
-            </motion.div>
-          </div>
-
-          {/* ── Right: Product mosaic ───────────────────────── */}
-          <div className="hidden lg:flex items-center justify-center py-12">
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.8, delay: 0.3, ease: [0.22, 1, 0.36, 1] }}
-              className="grid grid-cols-3 gap-3 w-[340px]"
-            >
-              {GRID_ITEMS.map(({ emoji, name, bg }, i) => (
-                <motion.div
-                  key={name}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.4 + i * 0.05, ease: [0.22, 1, 0.36, 1] }}
-                  whileHover={{ scale: 1.08, rotate: 2 }}
-                  className={`${bg} backdrop-blur-sm border border-white/10
-                              rounded-2xl aspect-square flex flex-col items-center
-                              justify-center gap-1 cursor-default select-none
-                              hover:border-white/20 transition-colors duration-200`}
-                >
-                  <span className="text-3xl">{emoji}</span>
-                  <span className="text-[10px] font-semibold text-white/60">{name}</span>
-                </motion.div>
-              ))}
-            </motion.div>
-          </div>
-
+            </div>
+          </motion.div>
         </div>
       </div>
 
-      {/* Bottom divider line */}
-      <div className="h-px bg-gradient-to-r from-transparent via-emerald-800/50 to-transparent" />
+      {/* Bottom edge */}
+      <div className="h-px bg-gradient-to-r from-transparent via-emerald-800/40 to-transparent" />
     </section>
   );
 }

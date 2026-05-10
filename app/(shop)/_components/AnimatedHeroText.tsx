@@ -25,7 +25,7 @@ export default function AnimatedHeroText() {
       <AnimatePresence mode="wait">
         <motion.span
           key={idx}
-          className="absolute left-0 text-white/25 whitespace-nowrap"
+          className="absolute left-0 text-emerald-400 whitespace-nowrap"
           initial={{ y: 40, opacity: 0, filter: "blur(8px)" }}
           animate={{ y: 0,  opacity: 1, filter: "blur(0px)" }}
           exit={{    y: -40, opacity: 0, filter: "blur(8px)" }}
