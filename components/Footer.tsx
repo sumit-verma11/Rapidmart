@@ -81,13 +81,13 @@ export default function Footer() {
 
           {/* Brand */}
           <div>
-            <div className="mb-4 inline-block bg-white rounded-xl px-3 py-1.5">
+            <div className="mb-4 inline-block bg-white rounded-xl px-4 py-2">
               <Image
                 src="/logo.png"
                 alt="RapidMart"
-                width={160}
-                height={64}
-                className="h-10 w-auto object-contain"
+                width={200}
+                height={80}
+                className="h-14 w-auto object-contain"
               />
             </div>
             <p className="text-gray-400 text-sm leading-relaxed mb-6">

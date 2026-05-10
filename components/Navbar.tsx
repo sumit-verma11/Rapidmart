@@ -230,7 +230,7 @@ export default function Navbar() {
                 alt="RapidMart"
                 width={160}
                 height={64}
-                className={`object-contain transition-all duration-300 ${scrolled ? "h-9" : "h-12"} w-auto`}
+                className={`object-contain transition-all duration-300 ${scrolled ? "h-12" : "h-16"} w-auto`}
                 priority
               />
             </Link>
