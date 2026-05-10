@@ -50,7 +50,7 @@ export function ClaimOfferHeroLink() {
                  font-semibold px-7 py-3.5 rounded-xl hover:bg-white/10
                  active:scale-95 transition-all duration-200"
     >
-      {status === "authenticated" ? "Shop Now →" : "Get ₹100 Off →"}
+      {status === "authenticated" ? "View Deals →" : "Get ₹100 Off →"}
     </Link>
   );
 }
