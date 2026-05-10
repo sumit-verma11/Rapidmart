@@ -24,7 +24,7 @@ const POPULAR_SEARCHES = [
   "Paneer", "Eggs", "Green tea", "Almonds",
 ];
 
-const HISTORY_KEY = "freshcart-search-history";
+const HISTORY_KEY = "rapidmart-search-history";
 
 function getHistory(): string[] {
   if (typeof window === "undefined") return [];

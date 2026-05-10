@@ -71,7 +71,7 @@ function LoginForm() {
 
         <div className="text-center mb-7">
           <h1 className="text-2xl font-bold text-dark">Welcome back</h1>
-          <p className="text-muted text-sm mt-1">Sign in to your FreshCart account</p>
+          <p className="text-muted text-sm mt-1">Sign in to your RapidMart account</p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -165,7 +165,7 @@ function LoginForm() {
           </p>
           <p>
             Admin:{" "}
-            <span className="font-medium text-dark">admin@freshcart.in</span>
+            <span className="font-medium text-dark">admin@rapidmart.in</span>
             {" / "}
             <span className="font-medium text-dark">Admin@1234</span>
           </p>

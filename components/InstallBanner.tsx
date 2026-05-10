@@ -3,7 +3,7 @@
 import { useInstallPrompt } from "@/hooks/useInstallPrompt";
 
 /**
- * Dismissible bottom banner that prompts the user to install FreshCart as a PWA.
+ * Dismissible bottom banner that prompts the user to install RapidMart as a PWA.
  * Only visible when the browser exposes a deferred install prompt and the user
  * hasn't dismissed it before.
  */
@@ -27,7 +27,7 @@ export default function InstallBanner() {
 
         {/* Copy */}
         <div className="flex-1 min-w-0">
-          <p className="font-bold text-dark text-sm">Install FreshCart</p>
+          <p className="font-bold text-dark text-sm">Install RapidMart</p>
           <p className="text-xs text-muted mt-0.5">
             Add to Home Screen for a faster, app-like experience
           </p>

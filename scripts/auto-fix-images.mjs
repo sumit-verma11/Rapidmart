@@ -19,7 +19,7 @@ import mongoose from "mongoose";
 
 const MONGO_URI =
   process.env.MONGO_URI ??
-  "mongodb://freshcart_admin:freshcart_secret@localhost:27017/freshcart?authSource=admin";
+  "mongodb://rapidmart_admin:rapidmart_secret@localhost:27017/rapidmart?authSource=admin";
 
 const DRY_RUN     = process.argv.includes("--dry-run");
 const ONLY_BROKEN = process.argv.includes("--only-broken");
@@ -110,7 +110,7 @@ async function fetchUnsplashUrl(keywords) {
   const query = encodeURIComponent(keywords);
   const res = await fetch(
     `https://source.unsplash.com/featured/600x600/?${query}`,
-    { redirect: "follow", headers: { "User-Agent": "FreshCart-image-fixer/1.0" } }
+    { redirect: "follow", headers: { "User-Agent": "RapidMart-image-fixer/1.0" } }
   );
   const match = res.url.match(/^https:\/\/images\.unsplash\.com\/photo-[^?]+/);
   return match ? `${match[0]}?w=600&q=80` : null;
@@ -126,7 +126,7 @@ const Product =
 // ── Main ──────────────────────────────────────────────────────────────────────
 
 async function main() {
-  console.log(`\n🖼  FreshCart — Auto-fix Product Images${DRY_RUN ? " [DRY RUN]" : ""}${ONLY_BROKEN ? " [ONLY BROKEN]" : ""}`);
+  console.log(`\n🖼  RapidMart — Auto-fix Product Images${DRY_RUN ? " [DRY RUN]" : ""}${ONLY_BROKEN ? " [ONLY BROKEN]" : ""}`);
   console.log("─".repeat(60));
 
   await mongoose.connect(MONGO_URI);

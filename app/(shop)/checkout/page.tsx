@@ -774,7 +774,7 @@ export default function CheckoutPage() {
 
               <h2 className="text-2xl font-extrabold text-dark mb-1">Order Placed!</h2>
               <p className="text-muted text-sm mb-2">
-                Thank you for shopping with FreshCart 🛒
+                Thank you for shopping with RapidMart 🛒
               </p>
               <div className="inline-flex items-center gap-2 bg-accent px-4 py-2 rounded-xl
                               text-sm font-mono font-semibold text-primary mb-6">

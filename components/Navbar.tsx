@@ -5,7 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { useSession, signOut } from "next-auth/react";
 import {
-  ShoppingCart, User, Search, Menu, X, Leaf, ChevronDown,
+  ShoppingCart, User, Search, Menu, X, ChevronDown,
   MapPin, Loader2, CheckCircle2, AlertCircle, LayoutDashboard,
   Package, LogOut, Heart,
 } from "lucide-react";
@@ -224,13 +224,15 @@ export default function Navbar() {
           <div className={`flex items-center gap-3 transition-all duration-300 ${scrolled ? "h-12" : "h-16"}`}>
 
             {/* Logo */}
-            <Link href="/" className="flex items-center gap-2 shrink-0">
-              <span className="bg-primary rounded-xl p-1.5">
-                <Leaf className="w-5 h-5 text-white" />
-              </span>
-              <span className="text-xl font-bold text-dark hidden sm:block">
-                Fresh<span className="text-primary">Cart</span>
-              </span>
+            <Link href="/" className="flex items-center shrink-0">
+              <Image
+                src="/logo.png"
+                alt="RapidMart"
+                width={160}
+                height={64}
+                className={`object-contain transition-all duration-300 ${scrolled ? "h-9" : "h-12"} w-auto`}
+                priority
+              />
             </Link>
 
             {/* Pincode detector */}

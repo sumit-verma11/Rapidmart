@@ -63,7 +63,7 @@ export async function sendOrderConfirmation(params: SendOrderConfirmationParams)
         <!-- Header -->
         <tr>
           <td style="background:linear-gradient(135deg,#16a34a,#166534);padding:28px 32px;text-align:center;">
-            <h1 style="margin:0;color:#fff;font-size:24px;font-weight:800;letter-spacing:-0.5px;">FreshCart</h1>
+            <h1 style="margin:0;color:#fff;font-size:24px;font-weight:800;letter-spacing:-0.5px;">RapidMart</h1>
             <p style="margin:6px 0 0;color:rgba(255,255,255,0.8);font-size:13px;">Your order is confirmed! 🎉</p>
           </td>
         </tr>
@@ -135,7 +135,7 @@ export async function sendOrderConfirmation(params: SendOrderConfirmationParams)
         <!-- Footer -->
         <tr>
           <td style="background:#f9fafb;border-top:1px solid #f0f0f0;padding:18px 32px;text-align:center;">
-            <p style="margin:0;font-size:12px;color:#aaa;">© ${new Date().getFullYear()} FreshCart. All rights reserved.</p>
+            <p style="margin:0;font-size:12px;color:#aaa;">© ${new Date().getFullYear()} RapidMart. All rights reserved.</p>
           </td>
         </tr>
 
@@ -147,9 +147,9 @@ export async function sendOrderConfirmation(params: SendOrderConfirmationParams)
 
   const transporter = getTransporter();
   return transporter.sendMail({
-    from: `"FreshCart" <${process.env.GMAIL_USER}>`,
+    from: `"RapidMart" <${process.env.GMAIL_USER}>`,
     to,
-    subject: `Order Confirmed #${orderNumber} — FreshCart`,
+    subject: `Order Confirmed #${orderNumber} — RapidMart`,
     html,
   });
 }

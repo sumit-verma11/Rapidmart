@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { Leaf, Mail, Phone, MapPin } from "lucide-react";
+import Image from "next/image";
+import { Mail, Phone, MapPin } from "lucide-react";
 import NewsletterForm from "./NewsletterForm";
 
 function IconInstagram({ className }: { className?: string }) {
@@ -80,13 +81,14 @@ export default function Footer() {
 
           {/* Brand */}
           <div>
-            <div className="flex items-center gap-2 mb-4">
-              <span className="bg-primary rounded-xl p-1.5">
-                <Leaf className="w-5 h-5 text-white" />
-              </span>
-              <span className="text-xl font-bold">
-                Fresh<span className="text-secondary">Cart</span>
-              </span>
+            <div className="mb-4 inline-block bg-white rounded-xl px-3 py-1.5">
+              <Image
+                src="/logo.png"
+                alt="RapidMart"
+                width={160}
+                height={64}
+                className="h-10 w-auto object-contain"
+              />
             </div>
             <p className="text-gray-400 text-sm leading-relaxed mb-6">
               Premium groceries delivered fresh to your doorstep. We partner with
@@ -189,11 +191,11 @@ export default function Footer() {
               </li>
               <li>
                 <a
-                  href="mailto:support@freshcart.in"
+                  href="mailto:support@rapidmart.in"
                   className="flex items-center gap-3 text-sm text-gray-400 hover:text-white transition-colors"
                 >
                   <Mail className="w-4 h-4 text-secondary shrink-0" />
-                  support@freshcart.in
+                  support@rapidmart.in
                 </a>
               </li>
             </ul>
@@ -224,7 +226,7 @@ export default function Footer() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5
                         flex flex-col sm:flex-row items-center justify-between gap-3
                         text-xs text-gray-500">
-          <p>© {new Date().getFullYear()} FreshCart. All rights reserved.</p>
+          <p>© {new Date().getFullYear()} RapidMart. All rights reserved.</p>
           <div className="flex items-center gap-4">
             <span>Made with 💚 in India</span>
             <span className="text-gray-700">·</span>

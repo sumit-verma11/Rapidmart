@@ -1,5 +1,5 @@
 /**
- * FreshCart — Mongoose model barrel export
+ * RapidMart — Mongoose model barrel export
  * Import from here instead of individual files to avoid circular deps.
  *
  * Usage:

@@ -44,6 +44,6 @@ export const useWishlistStore = create<WishlistState>()(
 
       clear: () => set({ items: [] }),
     }),
-    { name: "freshcart-wishlist" }
+    { name: "rapidmart-wishlist" }
   )
 );

@@ -5,7 +5,7 @@ import { Clock } from "lucide-react";
 import ProductCard from "@/components/ProductCard";
 import { IProduct } from "@/types";
 
-const STORAGE_KEY = "freshcart-recently-viewed";
+const STORAGE_KEY = "rapidmart-recently-viewed";
 
 export default function HomepageRecentlyViewed() {
   const [products, setProducts] = useState<IProduct[]>([]);
