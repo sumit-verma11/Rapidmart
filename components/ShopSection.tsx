@@ -424,7 +424,7 @@ export default function ShopSection({ initialCategories }: Props) {
   // ── Render ──────────────────────────────────────────────────────────────────
 
   return (
-    <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+    <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
 
       {/* Pull-to-refresh indicator */}
       <div
@@ -432,36 +432,6 @@ export default function ShopSection({ initialCategories }: Props) {
         style={{ height: (isPulling || isRefreshing) ? 40 : 0, opacity: isPulling ? pullProgress : isRefreshing ? 1 : 0 }}
       >
         <Loader2 className="w-6 h-6 text-primary animate-spin mt-2" />
-      </div>
-
-      {/* Category Quick-Nav */}
-      <div className="flex items-center gap-2 mb-8 overflow-x-auto scrollbar-hide pb-1">
-        <button
-          onClick={() => updateFilter({ category: "", subcategory: "" })}
-          className={`flex items-center gap-2 px-4 py-2.5 rounded-2xl text-sm font-semibold
-                      whitespace-nowrap transition-all shrink-0 border
-                      ${!filters.category
-                        ? "bg-primary text-white border-primary shadow-sm"
-                        : "bg-white dark:bg-gray-900 text-muted border-border hover:border-primary hover:text-primary"
-                      }`}
-        >
-          🛒 All
-        </button>
-        {orderedCategories.map((cat) => (
-          <button
-            key={cat._id}
-            onClick={() => updateFilter({ category: cat._id, subcategory: "" })}
-            className={`flex items-center gap-2 px-4 py-2.5 rounded-2xl text-sm font-semibold
-                        whitespace-nowrap transition-all shrink-0 border
-                        ${filters.category === cat._id
-                          ? "bg-primary text-white border-primary shadow-sm"
-                          : "bg-white dark:bg-gray-900 text-muted border-border hover:border-primary hover:text-primary"
-                        }`}
-          >
-            <span>{CATEGORY_EMOJI[cat.name] ?? "🛒"}</span>
-            {cat.name}
-          </button>
-        ))}
       </div>
 
       {/* Pincode banner */}
@@ -484,7 +454,7 @@ export default function ShopSection({ initialCategories }: Props) {
       )}
 
       {/* Section header + search + mobile filter button */}
-      <div className="flex flex-col sm:flex-row sm:items-center gap-4 mb-6">
+      <div className="flex flex-col sm:flex-row sm:items-center gap-4 mb-4">
         <div className="flex-1">
           <h2 className="text-2xl font-bold text-dark">
             {debouncedSearch
@@ -553,7 +523,7 @@ export default function ShopSection({ initialCategories }: Props) {
         {/* ── Product grid ─────────────────────────────────────────────────── */}
         <div className="flex-1 min-w-0">
           {loading ? (
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
               {Array.from({ length: 12 }).map((_, i) => (
                 <ProductSkeleton key={i} />
               ))}
@@ -599,7 +569,7 @@ export default function ShopSection({ initialCategories }: Props) {
             <>
               <motion.div
                 key={`${debouncedSearch}-${filters.category}-${filters.subcategory}`}
-                className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 gap-4"
+                className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3"
                 variants={{
                   visible: { transition: { staggerChildren: 0.04 } },
                 }}
@@ -622,7 +592,7 @@ export default function ShopSection({ initialCategories }: Props) {
               {/* Infinite scroll sentinel */}
               <div ref={sentinelRef} className="mt-8">
                 {loadingMore && (
-                  <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                  <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
                     {Array.from({ length: 4 }).map((_, i) => <ProductSkeleton key={i} />)}
                   </div>
                 )}
