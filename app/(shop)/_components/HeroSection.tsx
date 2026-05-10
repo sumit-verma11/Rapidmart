@@ -1,221 +1,226 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { motion, useScroll, useTransform } from "framer-motion";
+import { useRef } from "react";
 import Link from "next/link";
-import { ArrowRight, Leaf, Sparkles, Clock, Star } from "lucide-react";
+import { ArrowRight, Leaf, Zap, ShieldCheck, Clock } from "lucide-react";
 import AnimatedHeroText from "./AnimatedHeroText";
 import { ClaimOfferHeroLink } from "./ClaimOfferButton";
 
-const fadeUp = (delay = 0) => ({
-  initial:    { opacity: 0, y: 30 } as const,
-  animate:    { opacity: 1, y: 0  } as const,
-  transition: { duration: 0.65, ease: [0.22, 1, 0.36, 1] as const, delay },
-});
-
-const floatCards = [
-  {
-    emoji: "🥑",
-    label: "Avocado",
-    sub: "Just restocked",
-    accent: "text-emerald-600",
-    pos: "top-4 right-0 lg:right-[-1rem]",
-    delay: 0.8,
-  },
-  {
-    emoji: "🍓",
-    label: "Strawberries",
-    sub: "Farm fresh today",
-    accent: "text-rose-500",
-    pos: "bottom-10 left-0 lg:left-[-1.5rem]",
-    delay: 1.0,
-  },
+const TRUST = [
+  { icon: Clock,       label: "2-Hour Delivery",   val: "Lightning fast"  },
+  { icon: Leaf,        label: "100% Organic",       val: "Farm to door"    },
+  { icon: ShieldCheck, label: "Safe & Fresh",       val: "Quality assured" },
+  { icon: Zap,         label: "50K+ Customers",     val: "& growing"       },
 ];
 
 export default function HeroSection() {
+  const ref = useRef<HTMLElement>(null);
+  const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end start"] });
+  const bgY = useTransform(scrollYProgress, [0, 1], ["0%", "25%"]);
+
   return (
-    <section className="relative overflow-hidden bg-gradient-to-br from-[#0b3d22] via-[#1A6B3A] to-[#1e7d43]">
+    <section ref={ref} className="relative overflow-hidden bg-[#0c3d20]">
 
-      {/* Animated mesh orbs */}
+      {/* Parallax gradient bg */}
       <motion.div
-        className="pointer-events-none absolute inset-0 overflow-hidden"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 1.2 }}
-      >
-        <motion.div
-          className="absolute -top-40 -right-40 h-[500px] w-[500px] rounded-full bg-emerald-400/15 blur-3xl"
-          animate={{ scale: [1, 1.1, 1], x: [0, 20, 0] }}
-          transition={{ duration: 12, repeat: Infinity, ease: "easeInOut" }}
-        />
-        <motion.div
-          className="absolute -bottom-32 -left-32 h-[380px] w-[380px] rounded-full bg-yellow-400/10 blur-3xl"
-          animate={{ scale: [1, 1.15, 1], y: [0, -20, 0] }}
-          transition={{ duration: 10, repeat: Infinity, ease: "easeInOut", delay: 2 }}
-        />
-        <div className="absolute top-1/2 left-1/2 h-[280px] w-[280px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-white/5 blur-2xl" />
-      </motion.div>
+        style={{ y: bgY }}
+        className="absolute inset-0 bg-gradient-to-br from-[#0c3d20] via-[#1A6B3A] to-[#2d9e58]"
+      />
 
-      {/* Grid texture */}
-      <div
-        className="pointer-events-none absolute inset-0 opacity-[0.035]"
+      {/* Animated blobs */}
+      <div className="pointer-events-none absolute inset-0 overflow-hidden">
+        <motion.div
+          className="absolute -top-24 -right-24 h-96 w-96 rounded-full bg-emerald-400/20 blur-3xl"
+          animate={{ scale: [1, 1.2, 1], rotate: [0, 90, 0] }}
+          transition={{ duration: 15, repeat: Infinity, ease: "easeInOut" }}
+        />
+        <motion.div
+          className="absolute -bottom-24 -left-24 h-80 w-80 rounded-full bg-yellow-300/15 blur-3xl"
+          animate={{ scale: [1, 1.3, 1], rotate: [0, -90, 0] }}
+          transition={{ duration: 12, repeat: Infinity, ease: "easeInOut", delay: 3 }}
+        />
+        <motion.div
+          className="absolute top-1/3 left-1/2 h-64 w-64 -translate-x-1/2 rounded-full bg-white/5 blur-2xl"
+          animate={{ scale: [1, 1.15, 1] }}
+          transition={{ duration: 8, repeat: Infinity, ease: "easeInOut", delay: 1 }}
+        />
+      </div>
+
+      {/* Dot grid */}
+      <div className="pointer-events-none absolute inset-0 opacity-[0.06]"
         style={{
-          backgroundImage:
-            "linear-gradient(rgba(255,255,255,.8) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.8) 1px,transparent 1px)",
-          backgroundSize: "44px 44px",
+          backgroundImage: "radial-gradient(circle, rgba(255,255,255,0.8) 1px, transparent 1px)",
+          backgroundSize: "32px 32px",
         }}
       />
 
-      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 lg:py-14">
-        <div className="grid lg:grid-cols-2 gap-10 items-center">
+      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-10 pb-0">
+        <div className="grid lg:grid-cols-[1fr_auto] gap-8 items-center">
 
-          {/* ── Left copy ──────────────────────────────────────────── */}
-          <div className="text-white">
+          {/* ── Copy ──────────────────────────────────────── */}
+          <div className="text-white py-4 lg:py-6">
 
-            {/* Badge */}
             <motion.div
-              {...fadeUp(0)}
-              className="mb-5 inline-flex items-center gap-2 rounded-full border border-white/20
-                         bg-white/10 px-4 py-1.5 text-sm font-semibold backdrop-blur-sm"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6 }}
+              className="mb-4 inline-flex items-center gap-2 rounded-full
+                         border border-emerald-400/30 bg-emerald-400/10
+                         px-4 py-1.5 text-sm font-semibold backdrop-blur-sm"
             >
-              <Leaf className="h-3.5 w-3.5 text-emerald-300" />
+              <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
               Farm Fresh · Delivered Daily
-              <Sparkles className="h-3.5 w-3.5 text-yellow-300" />
             </motion.div>
 
-            {/* Headline */}
             <motion.h1
-              {...fadeUp(0.1)}
-              className="mb-5 text-4xl font-extrabold leading-tight sm:text-5xl lg:text-[3.3rem]"
+              initial={{ opacity: 0, y: 24 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.65, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
+              className="mb-4 text-4xl font-black leading-[1.1] sm:text-5xl lg:text-6xl tracking-tight"
             >
               Fresh Groceries
               <br />
-              <AnimatedHeroText />
+              <span className="text-secondary">
+                <AnimatedHeroText />
+              </span>
             </motion.h1>
 
-            {/* Sub */}
             <motion.p
-              {...fadeUp(0.2)}
-              className="mb-8 max-w-md text-base leading-relaxed text-white/75 sm:text-lg"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.2 }}
+              className="mb-8 max-w-lg text-white/70 text-lg leading-relaxed"
             >
-              Premium fruits, vegetables, dairy & more — delivered in 2 hours.
-              Free delivery on orders above{" "}
+              Premium produce delivered in under 2 hours.
+              Free delivery above{" "}
               <span className="font-bold text-yellow-300">₹499</span>.
             </motion.p>
 
-            {/* CTAs */}
-            <motion.div {...fadeUp(0.3)} className="flex flex-wrap gap-3">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.3 }}
+              className="flex flex-wrap gap-3"
+            >
               <Link
                 href="#shop"
-                className="inline-flex items-center gap-2 rounded-xl bg-white px-7 py-3.5
-                           font-bold text-primary shadow-lg shadow-black/20 transition-all
-                           duration-200 hover:-translate-y-0.5 hover:shadow-xl active:scale-95"
+                className="group inline-flex items-center gap-2 rounded-2xl bg-white px-8 py-3.5
+                           font-bold text-primary shadow-xl shadow-black/20
+                           hover:shadow-2xl hover:-translate-y-1 transition-all duration-200 active:scale-95"
               >
-                Shop Now <ArrowRight className="h-4 w-4" />
+                Shop Now
+                <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
               </Link>
               <ClaimOfferHeroLink />
             </motion.div>
 
-            {/* Trust badges */}
-            <motion.div {...fadeUp(0.4)} className="mt-10 flex items-center gap-6 flex-wrap">
-              {[
-                { icon: <Star className="w-4 h-4 text-yellow-300 fill-yellow-300" />, val: "4.8★", label: "App Rating" },
-                { icon: <Clock className="w-4 h-4 text-emerald-300" />, val: "2hr", label: "Delivery" },
-                { icon: <Leaf className="w-4 h-4 text-green-300" />, val: "100%", label: "Fresh" },
-              ].map(({ icon, val, label }) => (
-                <div key={label} className="flex items-center gap-2">
-                  <div className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center">
-                    {icon}
+            {/* Trust row */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.8, delay: 0.5 }}
+              className="mt-10 grid grid-cols-2 sm:grid-cols-4 gap-4"
+            >
+              {TRUST.map(({ icon: Icon, label, val }, i) => (
+                <motion.div
+                  key={label}
+                  initial={{ opacity: 0, y: 16 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.5 + i * 0.08 }}
+                  className="flex items-center gap-2.5"
+                >
+                  <div className="w-8 h-8 rounded-xl bg-white/10 flex items-center justify-center shrink-0">
+                    <Icon className="w-4 h-4 text-emerald-300" />
                   </div>
                   <div>
-                    <p className="text-lg font-extrabold leading-none text-white">{val}</p>
-                    <p className="text-[11px] text-white/55 mt-0.5">{label}</p>
+                    <p className="text-[11px] font-bold text-white leading-none">{label}</p>
+                    <p className="text-[10px] text-white/50 mt-0.5">{val}</p>
                   </div>
-                </div>
+                </motion.div>
               ))}
-
-              {/* Divider */}
-              <div className="w-px h-8 bg-white/20 hidden sm:block" />
-
-              <div>
-                <p className="text-lg font-extrabold text-white leading-none">50K+</p>
-                <p className="text-[11px] text-white/55 mt-0.5">Happy Customers</p>
-              </div>
             </motion.div>
           </div>
 
-          {/* ── Right visual ───────────────────────────────────────── */}
-          <div className="hidden lg:flex items-center justify-center">
-            <div className="relative">
-
-              {/* Main circle */}
-              <motion.div
-                initial={{ scale: 0.7, opacity: 0, rotate: -10 }}
-                animate={{ scale: 1, opacity: 1, rotate: 0 }}
-                transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1], delay: 0.3 }}
-                className="relative flex h-72 w-72 items-center justify-center rounded-full
-                           border border-white/15 bg-white/10 text-[7rem] shadow-2xl backdrop-blur-md"
-              >
+          {/* ── Right — emoji showcase ─────────────────────── */}
+          <div className="hidden lg:block relative self-end">
+            <motion.div
+              initial={{ opacity: 0, x: 40 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.8, delay: 0.4, ease: [0.22, 1, 0.36, 1] }}
+              className="relative w-[320px]"
+            >
+              {/* Big ring */}
+              <div className="flex h-64 w-64 mx-auto items-center justify-center rounded-full
+                              border-2 border-white/10 bg-white/10 backdrop-blur-md shadow-2xl text-[6rem]">
                 🛒
-
-                {/* Orbiting dot */}
+                {/* Orbiting ring */}
                 <motion.div
-                  className="absolute h-5 w-5 rounded-full bg-yellow-400 shadow-lg shadow-yellow-400/60
-                             flex items-center justify-center"
                   animate={{ rotate: 360 }}
-                  transition={{ duration: 7, repeat: Infinity, ease: "linear" }}
-                  style={{ top: -2, left: "50%", originX: "50%", originY: "148px" }}
+                  transition={{ duration: 9, repeat: Infinity, ease: "linear" }}
+                  className="absolute inset-0"
                 >
-                  <span className="text-[10px]">✦</span>
-                </motion.div>
-
-                {/* Second orbiting dot (opposite direction) */}
-                <motion.div
-                  className="absolute h-3 w-3 rounded-full bg-emerald-300 shadow-md shadow-emerald-400/50"
-                  animate={{ rotate: -360 }}
-                  transition={{ duration: 11, repeat: Infinity, ease: "linear" }}
-                  style={{ top: 12, left: "50%", originX: "50%", originY: "130px" }}
-                />
-              </motion.div>
-
-              {/* Floating product cards */}
-              {floatCards.map(({ emoji, label, sub, accent, pos, delay }) => (
-                <motion.div
-                  key={label}
-                  initial={{ opacity: 0, y: 20, scale: 0.85 }}
-                  animate={{ opacity: 1, y: 0, scale: 1 }}
-                  transition={{ duration: 0.6, delay, ease: [0.22, 1, 0.36, 1] }}
-                  whileHover={{ scale: 1.05, y: -3 }}
-                  className={`absolute ${pos} flex items-center gap-3 rounded-2xl
-                              border border-white/10 bg-white/95 dark:bg-gray-900/95
-                              px-4 py-3 shadow-xl backdrop-blur-md`}
-                >
-                  <span className="text-2xl">{emoji}</span>
-                  <div>
-                    <p className="text-xs font-bold text-gray-800">{label}</p>
-                    <p className={`text-[10px] font-semibold ${accent}`}>{sub}</p>
+                  <div className="absolute -top-2.5 left-1/2 -translate-x-1/2
+                                  w-5 h-5 rounded-full bg-yellow-400 shadow-lg shadow-yellow-400/50
+                                  flex items-center justify-center text-[10px]">
+                    ✦
                   </div>
                 </motion.div>
-              ))}
+                <motion.div
+                  animate={{ rotate: -360 }}
+                  transition={{ duration: 13, repeat: Infinity, ease: "linear" }}
+                  className="absolute inset-4"
+                >
+                  <div className="absolute -top-1.5 left-1/2 -translate-x-1/2
+                                  w-3 h-3 rounded-full bg-emerald-400 shadow-md" />
+                </motion.div>
+              </div>
 
-              {/* Delivery time badge */}
+              {/* Float card 1 */}
               <motion.div
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.6, delay: 1.2 }}
-                className="absolute -bottom-4 right-4 flex items-center gap-2 bg-white/95 dark:bg-gray-900/95
-                           rounded-2xl px-4 py-2.5 shadow-xl border border-white/10"
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: 0.9 }}
+                className="absolute top-2 -right-4 flex items-center gap-2.5
+                           bg-white/95 dark:bg-gray-900/95 rounded-2xl px-3.5 py-2.5 shadow-xl"
               >
-                <div className="w-7 h-7 rounded-full bg-primary flex items-center justify-center">
-                  <Clock className="w-4 h-4 text-white" />
-                </div>
+                <span className="text-xl">🥑</span>
                 <div>
-                  <p className="text-[10px] text-muted font-medium">Delivery in</p>
-                  <p className="text-xs font-extrabold text-gray-800">Under 2 hours</p>
+                  <p className="text-xs font-bold text-gray-800">Avocado</p>
+                  <p className="text-[10px] font-semibold text-emerald-600">Just restocked</p>
                 </div>
               </motion.div>
-            </div>
-          </div>
 
+              {/* Float card 2 */}
+              <motion.div
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: 1.1 }}
+                className="absolute bottom-6 -left-6 flex items-center gap-2.5
+                           bg-white/95 dark:bg-gray-900/95 rounded-2xl px-3.5 py-2.5 shadow-xl"
+              >
+                <span className="text-xl">🍓</span>
+                <div>
+                  <p className="text-xs font-bold text-gray-800">Strawberries</p>
+                  <p className="text-[10px] font-semibold text-rose-500">Farm fresh today</p>
+                </div>
+              </motion.div>
+            </motion.div>
+          </div>
+        </div>
+
+        {/* Wave bottom */}
+        <div className="relative mt-8 -mb-px">
+          <svg viewBox="0 0 1440 56" fill="none" xmlns="http://www.w3.org/2000/svg"
+               className="w-full block dark:hidden" preserveAspectRatio="none">
+            <path d="M0 56L60 46.7C120 37 240 19 360 14C480 9 600 19 720 28C840 37 960 46 1080 46.7C1200 47 1320 38 1380 33.3L1440 28V56H0Z"
+                  fill="#f9fafb"/>
+          </svg>
+          <svg viewBox="0 0 1440 56" fill="none" xmlns="http://www.w3.org/2000/svg"
+               className="w-full block hidden dark:block" preserveAspectRatio="none">
+            <path d="M0 56L60 46.7C120 37 240 19 360 14C480 9 600 19 720 28C840 37 960 46 1080 46.7C1200 47 1320 38 1380 33.3L1440 28V56H0Z"
+                  fill="#030712"/>
+          </svg>
         </div>
       </div>
     </section>
