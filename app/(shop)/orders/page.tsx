@@ -185,13 +185,13 @@ function OrderDetail({ orderId }: { orderId: string }) {
     <div className="space-y-5">
       {/* Timeline */}
       <div>
-        <p className="text-xs font-semibold text-muted uppercase tracking-wide mb-3">
+        <p className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-3">
           Delivery Progress
         </p>
         <DeliveryTimeline status={displayStatus} />
         {showETA && (
-          <p className="text-xs text-muted text-center mt-3">
-            Estimated: <strong className="text-dark">
+          <p className="text-xs text-gray-500 dark:text-gray-400 text-center mt-3">
+            Estimated: <strong className="text-gray-900 dark:text-white">
               {order.estimatedDelivery.minHours}–{order.estimatedDelivery.maxHours} hours
             </strong>
           </p>
@@ -200,15 +200,15 @@ function OrderDetail({ orderId }: { orderId: string }) {
 
       {/* Delivery partner stub — shown when out for delivery */}
       {displayStatus === "out_for_delivery" && (
-        <div className="card p-4 mt-1 space-y-3">
-          <p className="font-semibold text-dark text-sm">Delivery Partner</p>
+        <div className="bg-white dark:bg-gray-800 rounded-2xl p-4 mt-1 space-y-3 border border-gray-200 dark:border-gray-700">
+          <p className="font-semibold text-gray-900 dark:text-white text-sm">Delivery Partner</p>
           {order.deliveryPartner?.name ? (
-            <p className="text-sm text-muted">
+            <p className="text-sm text-gray-500 dark:text-gray-400">
               {order.deliveryPartner.name}
               {order.deliveryPartner.phone && ` · ${order.deliveryPartner.phone}`}
             </p>
           ) : (
-            <p className="text-sm text-muted">Assigning partner…</p>
+            <p className="text-sm text-gray-500 dark:text-gray-400">Assigning partner…</p>
           )}
           <div className="bg-gray-100 dark:bg-gray-800 rounded-xl h-44 flex flex-col items-center justify-center gap-2">
             <span className="text-3xl">🗺️</span>
@@ -222,14 +222,14 @@ function OrderDetail({ orderId }: { orderId: string }) {
 
       {/* Full items list */}
       <div>
-        <p className="text-xs font-semibold text-muted uppercase tracking-wide mb-3">Items Ordered</p>
+        <p className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-3">Items Ordered</p>
         <div className="space-y-3">
           {order.items.map((item, i) => {
             const product = typeof item.productId === "object" ? item.productId : null;
             const imgSrc  = product?.images?.[0] ?? "";
             return (
               <div key={i} className="flex items-center gap-3">
-                <div className="relative w-14 h-14 rounded-xl overflow-hidden bg-accent shrink-0 border border-border">
+                <div className="relative w-14 h-14 rounded-xl overflow-hidden bg-gray-100 dark:bg-gray-700 shrink-0 border border-gray-200 dark:border-gray-600">
                   {imgSrc ? (
                     <Image src={imgSrc} alt={item.name} fill className="object-cover" sizes="56px" />
                   ) : (
@@ -237,10 +237,10 @@ function OrderDetail({ orderId }: { orderId: string }) {
                   )}
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-semibold text-dark line-clamp-1">{item.name}</p>
-                  <p className="text-xs text-muted mt-0.5 font-mono">{item.variantSku} · Qty {item.qty}</p>
+                  <p className="text-sm font-semibold text-gray-900 dark:text-white line-clamp-1">{item.name}</p>
+                  <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5 font-mono">{item.variantSku} · Qty {item.qty}</p>
                 </div>
-                <p className="text-sm font-bold text-dark shrink-0">
+                <p className="text-sm font-bold text-gray-900 dark:text-white shrink-0">
                   {formatPrice(item.price * item.qty)}
                 </p>
               </div>
@@ -250,39 +250,39 @@ function OrderDetail({ orderId }: { orderId: string }) {
       </div>
 
       {/* Delivery address */}
-      <div className="bg-surface rounded-xl p-4 border border-border">
-        <p className="text-xs font-semibold text-muted uppercase tracking-wide mb-2
+      <div className="bg-gray-100 dark:bg-gray-800 rounded-xl p-4 border border-gray-200 dark:border-gray-700">
+        <p className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-2
                       flex items-center gap-1.5">
           <MapPin className="w-3.5 h-3.5" /> Delivery Address
         </p>
-        <p className="text-sm text-dark">{order.deliveryAddress.street}</p>
-        <p className="text-sm text-muted">
+        <p className="text-sm text-gray-900 dark:text-gray-100">{order.deliveryAddress.street}</p>
+        <p className="text-sm text-gray-500 dark:text-gray-400">
           {order.deliveryAddress.city}, {order.deliveryAddress.state} — {order.deliveryAddress.pincode}
         </p>
       </div>
 
       {/* Price breakdown */}
-      <div className="bg-white rounded-xl p-4 border border-border space-y-2.5">
-        <p className="text-xs font-semibold text-muted uppercase tracking-wide mb-1">
+      <div className="bg-white dark:bg-gray-800 rounded-xl p-4 border border-gray-200 dark:border-gray-700 space-y-2.5">
+        <p className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-1">
           Price Breakdown
         </p>
-        <div className="flex justify-between text-sm text-muted">
+        <div className="flex justify-between text-sm text-gray-500 dark:text-gray-400">
           <span>MRP Total</span><span>{formatPrice(order.totalMRP)}</span>
         </div>
         {order.totalDiscount > 0 && (
-          <div className="flex justify-between text-sm text-success font-medium">
+          <div className="flex justify-between text-sm text-emerald-600 dark:text-emerald-400 font-medium">
             <span>Discount</span><span>− {formatPrice(order.totalDiscount)}</span>
           </div>
         )}
-        <div className="flex justify-between text-sm text-muted">
+        <div className="flex justify-between text-sm text-gray-500 dark:text-gray-400">
           <span>Delivery</span>
           <span>{order.deliveryCharge > 0 ? formatPrice(order.deliveryCharge) : "Free"}</span>
         </div>
-        <div className="flex justify-between text-sm font-bold text-dark border-t border-border pt-2">
+        <div className="flex justify-between text-sm font-bold text-gray-900 dark:text-white border-t border-gray-200 dark:border-gray-700 pt-2">
           <span>Grand Total</span>
-          <span className="text-primary text-base">{formatPrice(order.grandTotal)}</span>
+          <span className="text-emerald-600 dark:text-emerald-400 text-base">{formatPrice(order.grandTotal)}</span>
         </div>
-        <p className="text-xs text-muted text-center pt-0.5">
+        <p className="text-xs text-gray-500 dark:text-gray-400 text-center pt-0.5">
           Payment: {order.billingType} (Cash on Delivery)
         </p>
       </div>
@@ -433,8 +433,8 @@ function OrdersContent() {
                   {/* Order # + status */}
                   <div className="flex items-start justify-between gap-2 mb-3">
                     <div>
-                      <p className="font-bold text-dark font-mono text-sm">#{order.orderNumber}</p>
-                      <p className="text-xs text-muted mt-0.5">
+                      <p className="font-bold text-gray-900 dark:text-white font-mono text-sm">#{order.orderNumber}</p>
+                      <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
                         {new Date(order.placedAt).toLocaleDateString("en-IN", {
                           day: "numeric", month: "short", year: "numeric",
                         })}
@@ -471,10 +471,10 @@ function OrdersContent() {
                   )}
 
                   {/* Total + toggle */}
-                  <div className="flex items-center justify-between pt-3 border-t border-border">
+                  <div className="flex items-center justify-between pt-3 border-t border-gray-200 dark:border-gray-700">
                     <div>
-                      <p className="text-xs text-muted">Total</p>
-                      <p className="font-bold text-primary">{formatPrice(order.grandTotal)}</p>
+                      <p className="text-xs text-gray-500 dark:text-gray-400">Total</p>
+                      <p className="font-bold text-emerald-600 dark:text-emerald-400">{formatPrice(order.grandTotal)}</p>
                     </div>
                     <button
                       onClick={() => setExpanded(isExpanded ? null : order._id)}
@@ -490,7 +490,7 @@ function OrdersContent() {
 
                 {/* Expandable detail panel */}
                 {isExpanded && (
-                  <div className="border-t border-border bg-gray-50/70 px-5 pb-5 pt-4">
+                  <div className="border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 px-5 pb-5 pt-4">
                     <OrderDetail orderId={order._id} />
                   </div>
                 )}
