@@ -1,109 +1,113 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { useState, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
-import { ArrowRight, Tag, Zap } from "lucide-react";
-import AnimatedHeroText from "./AnimatedHeroText";
+import { ChevronLeft, ChevronRight } from "lucide-react";
+
+const SLIDES = [
+  {
+    label:    "New User Offer",
+    headline: "Get ₹100 OFF your first order",
+    sub:      "Use code FRESH100 · Min. order ₹299",
+    cta:      "Claim Now",
+    href:     "/register",
+    bg:       "from-emerald-600 to-emerald-800",
+    accent:   "bg-yellow-400",
+    emoji:    "🎉",
+  },
+  {
+    label:    "Lightning Fast",
+    headline: "Delivered in under 2 hours",
+    sub:      "Free delivery on orders above ₹499",
+    cta:      "Shop Now",
+    href:     "#shop",
+    bg:       "from-violet-600 to-purple-800",
+    accent:   "bg-emerald-400",
+    emoji:    "⚡",
+  },
+  {
+    label:    "100% Fresh",
+    headline: "Farm-fresh produce, every day",
+    sub:      "Organic fruits & vegetables at your door",
+    cta:      "Explore",
+    href:     "#shop",
+    bg:       "from-orange-500 to-rose-600",
+    accent:   "bg-white",
+    emoji:    "🥦",
+  },
+];
 
 export default function HeroSection() {
+  const [idx, setIdx] = useState(0);
+  const [dir, setDir] = useState(1);
+
+  useEffect(() => {
+    const t = setInterval(() => { setDir(1); setIdx(i => (i + 1) % SLIDES.length); }, 4000);
+    return () => clearInterval(t);
+  }, []);
+
+  function go(next: number) {
+    setDir(next > idx ? 1 : -1);
+    setIdx(next);
+  }
+
+  const slide = SLIDES[idx];
+
   return (
-    <section className="relative bg-[#070f09] overflow-hidden">
-      {/* Glow blobs */}
-      <div className="pointer-events-none absolute -top-16 -left-16 h-48 w-48 rounded-full bg-emerald-600/25 blur-3xl" />
-      <div className="pointer-events-none absolute top-0 right-1/3 h-32 w-64 rounded-full bg-emerald-400/10 blur-2xl" />
+    <div className={`relative overflow-hidden bg-gradient-to-r ${slide.bg} transition-all duration-700`}>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex items-center justify-between h-[72px] sm:h-20 gap-4">
 
-      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 py-7 sm:py-8">
-
-          {/* Left — copy */}
-          <div className="flex flex-col gap-3">
-            {/* Offer pill */}
+          <AnimatePresence mode="wait" custom={dir}>
             <motion.div
-              initial={{ opacity: 0, x: -16 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.45 }}
-              className="inline-flex items-center gap-2 self-start rounded-full
-                         bg-emerald-500/15 border border-emerald-500/30
-                         px-3 py-1 text-xs font-bold text-emerald-400"
+              key={idx}
+              custom={dir}
+              variants={{
+                enter: (d: number) => ({ x: d * 60, opacity: 0 }),
+                center: { x: 0, opacity: 1 },
+                exit: (d: number) => ({ x: -d * 60, opacity: 0 }),
+              }}
+              initial="enter" animate="center" exit="exit"
+              transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
+              className="flex items-center gap-3 min-w-0"
             >
-              <Tag className="h-3 w-3" />
-              ₹100 off first order · FRESH100
+              <span className="text-2xl sm:text-3xl shrink-0">{slide.emoji}</span>
+              <div className="min-w-0">
+                <p className="text-[10px] font-black uppercase tracking-widest text-white/60 mb-0.5">{slide.label}</p>
+                <p className="text-sm sm:text-base font-black text-white leading-tight truncate">{slide.headline}</p>
+                <p className="text-xs text-white/65 hidden sm:block mt-0.5">{slide.sub}</p>
+              </div>
             </motion.div>
+          </AnimatePresence>
 
-            {/* Headline */}
-            <motion.div
-              initial={{ opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.55, delay: 0.08, ease: [0.22, 1, 0.36, 1] }}
-              className="flex flex-wrap items-baseline gap-x-3 gap-y-1"
-            >
-              <h1 className="text-3xl sm:text-4xl font-black text-white leading-none tracking-tight">
-                Fresh Groceries
-              </h1>
-              <span className="text-2xl sm:text-3xl font-black text-emerald-400 leading-none">
-                <AnimatedHeroText />
-              </span>
-            </motion.div>
-
-            {/* Sub */}
-            <motion.p
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.5, delay: 0.18 }}
-              className="text-sm text-white/45 max-w-sm leading-relaxed"
-            >
-              Farm-to-door in under 2 hours · Free delivery above{" "}
-              <span className="text-yellow-400 font-semibold">₹499</span>
-            </motion.p>
+          <div className="flex items-center gap-2 shrink-0">
+            <Link href={slide.href}
+              className={`${slide.accent} text-gray-900 text-xs font-black px-4 py-2 rounded-xl
+                          hover:opacity-90 transition-opacity whitespace-nowrap shadow-md`}>
+              {slide.cta}
+            </Link>
+            <div className="flex items-center gap-1">
+              <button onClick={() => go((idx - 1 + SLIDES.length) % SLIDES.length)}
+                className="w-6 h-6 rounded-full bg-white/20 hover:bg-white/30 flex items-center justify-center transition-colors">
+                <ChevronLeft className="w-3.5 h-3.5 text-white" />
+              </button>
+              <button onClick={() => go((idx + 1) % SLIDES.length)}
+                className="w-6 h-6 rounded-full bg-white/20 hover:bg-white/30 flex items-center justify-center transition-colors">
+                <ChevronRight className="w-3.5 h-3.5 text-white" />
+              </button>
+            </div>
           </div>
+        </div>
 
-          {/* Right — CTAs + stats */}
-          <motion.div
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.55, delay: 0.15 }}
-            className="flex flex-col gap-3 sm:items-end shrink-0"
-          >
-            <div className="flex items-center gap-2.5 flex-wrap">
-              <Link
-                href="#shop"
-                className="group inline-flex items-center gap-2 rounded-xl
-                           bg-emerald-500 hover:bg-emerald-400 text-white
-                           font-bold px-5 py-2.5 text-sm
-                           shadow-lg shadow-emerald-900/40
-                           transition-all duration-200 hover:-translate-y-0.5 active:scale-95"
-              >
-                Shop Now
-                <ArrowRight className="h-3.5 w-3.5 group-hover:translate-x-0.5 transition-transform" />
-              </Link>
-              <Link
-                href="/register"
-                className="inline-flex items-center gap-1.5 rounded-xl
-                           border border-white/20 hover:border-white/40
-                           text-white/70 hover:text-white
-                           font-semibold px-5 py-2.5 text-sm
-                           transition-all duration-200 hover:bg-white/5"
-              >
-                <Zap className="h-3.5 w-3.5 text-yellow-400" />
-                Claim ₹100 Off
-              </Link>
-            </div>
-
-            {/* Compact stats */}
-            <div className="flex items-center gap-4">
-              {[["50K+","Customers"],["2hr","Delivery"],["99%","Fresh"]].map(([v,l]) => (
-                <div key={l} className="text-center">
-                  <p className="text-sm font-black text-white">{v}</p>
-                  <p className="text-[10px] text-white/35">{l}</p>
-                </div>
-              ))}
-            </div>
-          </motion.div>
+        {/* Dot indicators */}
+        <div className="flex justify-center gap-1.5 pb-2">
+          {SLIDES.map((_, i) => (
+            <button key={i} onClick={() => go(i)}
+              className={`rounded-full transition-all duration-300 ${i === idx ? "w-4 h-1.5 bg-white" : "w-1.5 h-1.5 bg-white/30"}`} />
+          ))}
         </div>
       </div>
-
-      {/* Bottom edge */}
-      <div className="h-px bg-gradient-to-r from-transparent via-emerald-800/40 to-transparent" />
-    </section>
+    </div>
   );
 }
