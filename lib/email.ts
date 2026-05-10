@@ -1,8 +1,6 @@
 import { Resend } from "resend";
 import { formatPrice } from "./utils";
 
-const resend = new Resend(process.env.RESEND_API_KEY);
-
 interface OrderItem {
   name: string;
   qty: number;
@@ -137,6 +135,7 @@ export async function sendOrderConfirmation(params: SendOrderConfirmationParams)
 </body>
 </html>`;
 
+  const resend = new Resend(process.env.RESEND_API_KEY);
   return resend.emails.send({
     from: "FreshCart <orders@resend.dev>",
     to,
