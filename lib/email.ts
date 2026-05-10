@@ -1,4 +1,4 @@
-import { Resend } from "resend";
+import nodemailer from "nodemailer";
 import { formatPrice } from "./utils";
 
 interface OrderItem {
@@ -19,6 +19,16 @@ interface SendOrderConfirmationParams {
   deliveryCharge: number;
   grandTotal: number;
   estimatedDelivery: { minHours: number; maxHours: number };
+}
+
+function getTransporter() {
+  return nodemailer.createTransport({
+    service: "gmail",
+    auth: {
+      user: process.env.GMAIL_USER,
+      pass: process.env.GMAIL_APP_PASSWORD,
+    },
+  });
 }
 
 export async function sendOrderConfirmation(params: SendOrderConfirmationParams) {
@@ -116,8 +126,8 @@ export async function sendOrderConfirmation(params: SendOrderConfirmationParams)
             </div>
 
             <p style="margin:0;font-size:13px;color:#555;line-height:1.6;">
-              Questions? Reply to this email or contact us at
-              <a href="mailto:support@freshcart.in" style="color:#16a34a;">support@freshcart.in</a>
+              Questions? Contact us at
+              <a href="mailto:${process.env.GMAIL_USER}" style="color:#16a34a;">${process.env.GMAIL_USER}</a>
             </p>
           </td>
         </tr>
@@ -135,9 +145,9 @@ export async function sendOrderConfirmation(params: SendOrderConfirmationParams)
 </body>
 </html>`;
 
-  const resend = new Resend(process.env.RESEND_API_KEY);
-  return resend.emails.send({
-    from: "FreshCart <orders@resend.dev>",
+  const transporter = getTransporter();
+  return transporter.sendMail({
+    from: `"FreshCart" <${process.env.GMAIL_USER}>`,
     to,
     subject: `Order Confirmed #${orderNumber} — FreshCart`,
     html,

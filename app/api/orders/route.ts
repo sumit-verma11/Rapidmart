@@ -135,7 +135,7 @@ export async function POST(req: NextRequest) {
     });
 
     // Send order confirmation email (non-blocking)
-    if (process.env.RESEND_API_KEY) {
+    if (process.env.GMAIL_USER && process.env.GMAIL_APP_PASSWORD) {
       const user = await User.findById(session.user.id).select("email name").lean() as { email: string; name: string } | null;
       if (user?.email) {
         sendOrderConfirmation({
