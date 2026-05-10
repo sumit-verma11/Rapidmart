@@ -165,9 +165,9 @@ function LoginForm() {
           </p>
           <p>
             Admin:{" "}
-            <span className="font-medium text-dark">admin@rapidmart.in</span>
+            <span className="font-medium text-dark">admin@rapidmart.com</span>
             {" / "}
-            <span className="font-medium text-dark">Admin@1234</span>
+            <span className="font-medium text-dark">Admin@123</span>
           </p>
         </div>
 
