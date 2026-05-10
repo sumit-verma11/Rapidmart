@@ -219,8 +219,13 @@
     0%,100% { transform: scale(1); }
     50%      { transform: scale(1.07); }
   }
+  @keyframes shimmerBanner {
+    0%   { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+  }
 
   /* ── Utility classes ──────────────────────────────────────────────── */
+  .group-hover\:scale-108:is(.group:hover *) { transform: scale(1.08); }
   .animate-badge-bounce  { animation: badgeBounce 0.45s ease-out; }
   .animate-glow          { animation: glowPulse    2s ease-in-out infinite; }
   .animate-gradient      { background-size: 300% 300%; animation: gradientShift 8s ease infinite; }

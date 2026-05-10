@@ -4,7 +4,10 @@ import { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
-import { ShoppingCart, Leaf, Star, Minus, Plus, Heart, Flame, Sparkles, RotateCcw, Zap, AlertTriangle } from "lucide-react";
+import {
+  ShoppingCart, Leaf, Star, Minus, Plus, Heart,
+  Flame, Sparkles, RotateCcw, Zap, AlertTriangle,
+} from "lucide-react";
 import { ICategory, IProduct } from "@/types";
 import { formatPrice, calculateDiscount } from "@/lib/utils";
 import { useCartStore } from "@/store/cart";
@@ -15,13 +18,12 @@ import toast from "react-hot-toast";
 import { haptic } from "@/lib/haptics";
 import Tooltip from "@/components/Tooltip";
 
-// Compute a simple Nutri-score (A–E) from calories per 100g
 function getNutriScore(calories: number): { grade: string; color: string; bg: string } {
-  if (calories < 80)  return { grade: "A", color: "text-green-700",  bg: "bg-green-100" };
-  if (calories < 160) return { grade: "B", color: "text-lime-700",   bg: "bg-lime-100"  };
-  if (calories < 240) return { grade: "C", color: "text-yellow-700", bg: "bg-yellow-100" };
-  if (calories < 350) return { grade: "D", color: "text-orange-700", bg: "bg-orange-100" };
-  return               { grade: "E", color: "text-red-700",    bg: "bg-red-100"   };
+  if (calories < 80)  return { grade: "A", color: "text-green-700 dark:text-green-400",  bg: "bg-green-100 dark:bg-green-900/40" };
+  if (calories < 160) return { grade: "B", color: "text-lime-700 dark:text-lime-400",    bg: "bg-lime-100 dark:bg-lime-900/40"   };
+  if (calories < 240) return { grade: "C", color: "text-yellow-700 dark:text-yellow-400", bg: "bg-yellow-100 dark:bg-yellow-900/40" };
+  if (calories < 350) return { grade: "D", color: "text-orange-700 dark:text-orange-400", bg: "bg-orange-100 dark:bg-orange-900/40" };
+  return               { grade: "E", color: "text-red-700 dark:text-red-400",    bg: "bg-red-100 dark:bg-red-900/40"   };
 }
 
 interface ProductCardProps {
@@ -48,7 +50,6 @@ export default function ProductCard({ product }: ProductCardProps) {
   const reordered = hasOrdered(pid);
   const daysAgo = daysSinceOrder(pid);
 
-  // Flash sale
   const flashEndsAt = product.flashSale?.endsAt;
   const flashActive = !!(flashEndsAt && new Date(flashEndsAt) > new Date());
   const flashPrice = flashActive && v && product.flashSale
@@ -135,126 +136,135 @@ export default function ProductCard({ product }: ProductCardProps) {
   return (
     <Link href={`/products/${product.slug}`} className="block group">
       <motion.div
-        className={`card-hover overflow-hidden h-full flex flex-col${flashActive ? " ring-2 ring-red-500 animate-glow" : ""}`}
-        whileHover={{ y: -6, boxShadow: "0 20px 40px rgba(0,0,0,0.15)" }}
-        transition={{ type: "spring", stiffness: 300, damping: 20 }}
+        className={`relative overflow-hidden h-full flex flex-col rounded-2xl
+                    bg-white dark:bg-gray-900
+                    border border-gray-100 dark:border-gray-800
+                    shadow-sm hover:shadow-lg dark:shadow-black/30
+                    transition-shadow duration-300
+                    ${flashActive ? "ring-2 ring-red-500 ring-offset-1 dark:ring-offset-gray-950 animate-glow" : ""}`}
+        whileHover={{ y: -4 }}
+        transition={{ type: "spring", stiffness: 350, damping: 25 }}
       >
-        {/* Image */}
-        <div className="relative aspect-square bg-accent overflow-hidden">
+        {/* ── Image ───────────────────────────────────────────────── */}
+        <div className="relative aspect-square bg-gradient-to-br from-gray-50 to-gray-100
+                        dark:from-gray-800 dark:to-gray-900 overflow-hidden">
           {product.images[0] ? (
             <Image
               src={product.images[0]}
               alt={product.name}
               fill
-              className="object-contain group-hover:scale-105 transition-transform duration-300"
+              className="object-contain p-2 group-hover:scale-108 transition-transform duration-500 ease-out"
               sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
               onError={(e) => { (e.target as HTMLImageElement).src = "/placeholder.svg"; }}
             />
           ) : (
-            <div className="w-full h-full flex items-center justify-center text-5xl">🛒</div>
+            <div className="w-full h-full flex items-center justify-center text-5xl opacity-40">🥕</div>
           )}
 
-          {/* Wishlist heart */}
+          {/* Gradient fade at bottom of image */}
+          <div className="absolute inset-x-0 bottom-0 h-8 bg-gradient-to-t from-white/20 dark:from-gray-900/20 to-transparent pointer-events-none" />
+
+          {/* Wishlist */}
           <motion.button
             onClick={handleWishlist}
-            whileTap={{ scale: 0.8 }}
-            className={`absolute top-2 right-2 w-7 h-7 rounded-full flex items-center
-                        justify-center shadow transition-all duration-150
+            whileTap={{ scale: 0.75 }}
+            className={`absolute top-2.5 right-2.5 w-7 h-7 rounded-full flex items-center
+                        justify-center shadow-md transition-all duration-150
                         ${isWishlisted
                           ? "bg-red-500 text-white"
-                          : "bg-white/90 text-muted hover:text-red-500"}`}
+                          : "bg-white/90 dark:bg-gray-800/90 text-gray-400 dark:text-gray-500 hover:text-red-500 dark:hover:text-red-400"}`}
             aria-label={isWishlisted ? "Remove from wishlist" : "Add to wishlist"}
           >
             <Heart className={`w-3.5 h-3.5 ${isWishlisted ? "fill-white" : ""}`} />
           </motion.button>
 
-          {/* Badges (top-left) */}
-          <div className="absolute top-2 left-2 flex flex-col gap-1">
+          {/* Badges */}
+          <div className="absolute top-2.5 left-2.5 flex flex-col gap-1">
             {flashActive && (
-              <span className="flex items-center gap-1 text-[10px] font-bold px-2 py-0.5
-                               rounded-full bg-red-500 text-white">
+              <motion.span
+                animate={{ scale: [1, 1.05, 1] }}
+                transition={{ duration: 1.5, repeat: Infinity }}
+                className="flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full bg-red-500 text-white shadow-sm"
+              >
                 <Zap className="w-3 h-3" /> FLASH
-              </span>
+              </motion.span>
             )}
             {reordered && (
-              <span className="flex items-center gap-1 text-[10px] font-bold px-2 py-0.5
-                               rounded-full bg-green-500 text-white">
+              <span className="flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-500 text-white shadow-sm">
                 <RotateCcw className="w-3 h-3" /> Re-order
               </span>
             )}
             {product.isOrganic && (
-              <span className="badge-organic flex items-center gap-1">
+              <span className="flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full bg-green-100 dark:bg-green-900/60 text-green-700 dark:text-green-400 shadow-sm">
                 <Leaf className="w-3 h-3" /> Organic
               </span>
             )}
             {product.isNewArrival && (
-              <span className="flex items-center gap-1 text-[10px] font-bold px-2 py-0.5
-                               rounded-full bg-blue-500 text-white">
+              <span className="flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full bg-blue-500 text-white shadow-sm">
                 <Sparkles className="w-3 h-3" /> New
               </span>
             )}
             {product.isBestseller && (
-              <span className="flex items-center gap-1 text-[10px] font-bold px-2 py-0.5
-                               rounded-full bg-orange-500 text-white">
+              <span className="flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full bg-orange-500 text-white shadow-sm">
                 <Flame className="w-3 h-3" /> Hot
               </span>
             )}
             {(product.isSale || discount > 0) && (
-              <span className="badge-sale">{discount > 0 ? `${discount}% OFF` : "SALE"}</span>
+              <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-secondary text-white shadow-sm">
+                {discount > 0 ? `${discount}% OFF` : "SALE"}
+              </span>
             )}
           </div>
 
           {/* Out of stock overlay */}
           {isOutOfStock && (
-            <div className="absolute inset-0 bg-white/60 flex items-center justify-center">
-              <span className="badge-oos text-sm font-bold px-3 py-1.5">Out of Stock</span>
+            <div className="absolute inset-0 bg-white/75 dark:bg-gray-900/80 flex items-center justify-center backdrop-blur-[1px]">
+              <span className="text-xs font-bold px-3 py-1.5 rounded-full
+                               bg-red-100 dark:bg-red-900/50 text-red-600 dark:text-red-400 shadow-sm">
+                Out of Stock
+              </span>
             </div>
           )}
         </div>
 
-        {/* Info */}
-        <div className="p-3 flex flex-col flex-1 gap-2">
-          <div>
-            {categoryName && (
-              <p className="text-xs text-muted mb-0.5 font-medium">{categoryName}</p>
-            )}
-            <h3 className="font-semibold text-dark text-sm leading-tight line-clamp-2
-                           group-hover:text-primary transition-colors">
-              {product.name}
-            </h3>
-            {v && <p className="text-xs text-muted mt-0.5">{v.size}{v.unit}</p>}
-          </div>
+        {/* ── Info ────────────────────────────────────────────────── */}
+        <div className="p-3 flex flex-col flex-1 gap-1.5">
+          {categoryName && (
+            <p className="text-[11px] text-muted font-semibold uppercase tracking-wide">{categoryName}</p>
+          )}
 
-          {/* Rating + info badges row */}
+          <h3 className="font-semibold text-sm leading-snug line-clamp-2
+                         text-gray-800 dark:text-gray-100
+                         group-hover:text-primary transition-colors duration-150">
+            {product.name}
+          </h3>
+
+          {v && (
+            <p className="text-[11px] text-muted">{v.size}{v.unit}</p>
+          )}
+
+          {/* Rating + info badges */}
           <div className="flex items-center gap-2 flex-wrap">
             {product.reviewCount > 0 && (
-              <div className="flex items-center gap-1">
-                <Star className="w-3.5 h-3.5 fill-secondary text-secondary" />
-                <span className="text-xs font-semibold text-dark dark:text-white">{product.rating.toFixed(1)}</span>
-                <span className="text-xs text-muted">({product.reviewCount})</span>
+              <div className="flex items-center gap-0.5">
+                <Star className="w-3 h-3 fill-secondary text-secondary" />
+                <span className="text-xs font-bold text-gray-700 dark:text-gray-300">{product.rating.toFixed(1)}</span>
+                <span className="text-[10px] text-muted">({product.reviewCount})</span>
               </div>
             )}
-
-            {/* Allergen warning tooltip */}
             {product.allergyInfo && (
               <Tooltip
                 content={<><span className="font-semibold block mb-0.5">Allergen Info</span>{product.allergyInfo}</>}
                 side="top"
                 maxWidth={200}
               >
-                <span
-                  className="inline-flex items-center gap-0.5 text-[10px] font-semibold
-                             px-1.5 py-0.5 rounded-full bg-amber-100 text-amber-700
-                             cursor-default"
-                  aria-label={`Allergen information: ${product.allergyInfo}`}
-                >
-                  <AlertTriangle className="w-2.5 h-2.5" />
-                  Allergen
+                <span className="inline-flex items-center gap-0.5 text-[10px] font-semibold
+                                 px-1.5 py-0.5 rounded-full bg-amber-100 dark:bg-amber-900/40
+                                 text-amber-700 dark:text-amber-400 cursor-default">
+                  <AlertTriangle className="w-2.5 h-2.5" /> Allergen
                 </span>
               </Tooltip>
             )}
-
-            {/* Nutri-score tooltip */}
             {product.nutritionFacts?.calories != null && (
               (() => {
                 const ns = getNutriScore(product.nutritionFacts.calories as number);
@@ -275,10 +285,8 @@ export default function ProductCard({ product }: ProductCardProps) {
                     side="top"
                     maxWidth={180}
                   >
-                    <span
-                      className={`inline-flex items-center text-[10px] font-bold
-                                 px-1.5 py-0.5 rounded-full cursor-default
-                                 ${ns.bg} ${ns.color}`}
+                    <span className={`inline-flex items-center text-[10px] font-bold
+                                     px-1.5 py-0.5 rounded-full cursor-default ${ns.bg} ${ns.color}`}
                       aria-label={`Nutri-score grade ${ns.grade}`}
                     >
                       {ns.grade}
@@ -289,24 +297,29 @@ export default function ProductCard({ product }: ProductCardProps) {
             )}
           </div>
 
-          {/* Price + cart controls */}
-          <div className="flex items-center justify-between mt-auto pt-1 gap-2">
+          {/* Price + cart */}
+          <div className="flex items-center justify-between mt-auto pt-2 gap-2 border-t border-gray-100 dark:border-gray-800">
             <div className="min-w-0">
-              <span className="price-current text-base">{formatPrice(flashActive ? flashPrice : effectivePrice)}</span>
+              <span className="text-base font-extrabold text-primary">
+                {formatPrice(flashActive ? flashPrice : effectivePrice)}
+              </span>
               {v && (flashActive ? flashPrice < v.mrp : v.sellingPrice < v.mrp) && (
-                <span className="price-original text-xs ml-1.5">{formatPrice(v.mrp)}</span>
+                <span className="text-xs text-muted line-through ml-1.5">
+                  {formatPrice(v.mrp)}
+                </span>
               )}
               {flashActive && countdown && (
-                <p className="text-[10px] text-red-600 font-bold mt-0.5">⚡ {countdown}</p>
+                <p className="text-[10px] text-red-500 dark:text-red-400 font-bold mt-0.5">
+                  ⚡ {countdown}
+                </p>
               )}
               {!flashActive && daysAgo !== null && (
-                <p className="text-[10px] text-green-600 font-medium mt-0.5">
+                <p className="text-[10px] text-emerald-600 dark:text-emerald-400 font-medium mt-0.5">
                   {daysAgo === 0 ? "Ordered today" : `Ordered ${daysAgo}d ago`}
                 </p>
               )}
             </div>
 
-            {/* Cart button or qty controls — AnimatePresence morph */}
             <AnimatePresence mode="wait" initial={false}>
               {qty > 0 ? (
                 <motion.div
@@ -315,25 +328,26 @@ export default function ProductCard({ product }: ProductCardProps) {
                   animate={{ scale: 1, opacity: 1 }}
                   exit={{ scale: 0.8, opacity: 0 }}
                   transition={{ type: "spring", stiffness: 500, damping: 30 }}
-                  className="flex items-center border-2 border-primary rounded-xl overflow-hidden shrink-0"
+                  className="flex items-center rounded-xl overflow-hidden shrink-0
+                             border-2 border-primary dark:border-primary/80"
                   onClick={(e) => e.preventDefault()}
                 >
                   <button
                     onClick={handleDecrement}
                     className="w-7 h-7 flex items-center justify-center text-primary
-                               hover:bg-accent active:bg-accent/80 transition-colors"
+                               hover:bg-emerald-50 dark:hover:bg-emerald-950/40 transition-colors"
                     aria-label="Decrease quantity"
                   >
                     <Minus className="w-3.5 h-3.5" />
                   </button>
-                  <span className="w-7 text-center text-sm font-bold text-dark leading-none">
+                  <span className="w-7 text-center text-sm font-bold text-gray-800 dark:text-gray-100 leading-none">
                     {qty}
                   </span>
                   <button
                     onClick={handleAdd}
                     disabled={qty >= product.stockQty}
                     className="w-7 h-7 flex items-center justify-center text-primary
-                               hover:bg-accent active:bg-accent/80 transition-colors
+                               hover:bg-emerald-50 dark:hover:bg-emerald-950/40 transition-colors
                                disabled:opacity-40 disabled:cursor-not-allowed"
                     aria-label="Increase quantity"
                   >
@@ -347,12 +361,13 @@ export default function ProductCard({ product }: ProductCardProps) {
                   animate={{ scale: 1, opacity: 1 }}
                   exit={{ scale: 0.8, opacity: 0 }}
                   transition={{ type: "spring", stiffness: 500, damping: 30 }}
-                  whileTap={{ scale: 0.85 }}
+                  whileTap={{ scale: 0.8 }}
                   onClick={handleAdd}
                   disabled={isOutOfStock}
-                  className="bg-primary text-white w-8 h-8 rounded-xl flex items-center
-                             justify-center hover:bg-primary-600 transition-all duration-150
-                             disabled:opacity-40 disabled:cursor-not-allowed shrink-0"
+                  className="bg-primary hover:bg-primary-600 text-white w-8 h-8 rounded-xl
+                             flex items-center justify-center transition-colors duration-150
+                             disabled:opacity-40 disabled:cursor-not-allowed shrink-0 shadow-sm
+                             shadow-primary/30"
                   aria-label="Add to cart"
                 >
                   <ShoppingCart className="w-4 h-4" />
