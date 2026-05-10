@@ -27,6 +27,7 @@
     "react-dom": "^18",
     "react-hot-toast": "^2.4.1",
     "recharts": "^3.7.0",
+    "resend": "^6.12.3",
     "tailwind-merge": "^2.4.0",
     "typescript": "^5",
     "vercel": "^53.3.1",

@@ -4,8 +4,10 @@ import { authOptions } from "@/lib/auth";
 import { connectDB } from "@/lib/mongoose";
 import Order from "@/models/Order";
 import Product from "@/models/Product";
+import User from "@/models/User";
 import { IProductDocument } from "@/models";
 import { generateOrderNumber, getDeliveryCharge } from "@/lib/utils";
+import { sendOrderConfirmation } from "@/lib/email";
 
 export const dynamic = "force-dynamic";
 
@@ -116,6 +118,8 @@ export async function POST(req: NextRequest) {
     const grandTotal = grandTotalItems + deliveryCharge;
     const totalDiscount = Math.max(0, totalMRP - grandTotalItems);
 
+    const finalEstimate = estimatedDelivery ?? { minHours: 2, maxHours: 4 };
+
     const order = await Order.create({
       userId: session.user.id,
       orderNumber: generateOrderNumber(),
@@ -123,12 +127,31 @@ export async function POST(req: NextRequest) {
       deliveryAddress: { street, city, state, pincode },
       billingType: "COD",
       status: "confirmed",
-      estimatedDelivery: estimatedDelivery ?? { minHours: 2, maxHours: 4 },
+      estimatedDelivery: finalEstimate,
       totalMRP,
       totalDiscount,
       deliveryCharge,
       grandTotal,
     });
+
+    // Send order confirmation email (non-blocking)
+    if (process.env.RESEND_API_KEY) {
+      const user = await User.findById(session.user.id).select("email name").lean() as { email: string; name: string } | null;
+      if (user?.email) {
+        sendOrderConfirmation({
+          to: user.email,
+          customerName: user.name ?? session.user.name ?? "Customer",
+          orderNumber: order.orderNumber,
+          items: orderItems,
+          deliveryAddress: { street, city, state, pincode },
+          totalMRP,
+          totalDiscount,
+          deliveryCharge,
+          grandTotal,
+          estimatedDelivery: finalEstimate,
+        }).catch((err) => console.error("[ORDER EMAIL]", err));
+      }
+    }
 
     return NextResponse.json({ success: true, data: order }, { status: 201 });
   } catch (error) {
