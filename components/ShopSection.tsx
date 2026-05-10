@@ -453,47 +453,20 @@ export default function ShopSection({ initialCategories }: Props) {
         </div>
       )}
 
-      {/* Section header + search + mobile filter button */}
-      <div className="flex flex-col sm:flex-row sm:items-center gap-4 mb-4">
-        <div className="flex-1">
-          <h2 className="text-2xl font-bold text-dark">
-            {debouncedSearch
-              ? `Results for "${debouncedSearch}"`
-              : filters.category
-                ? (initialCategories.find((c) => c._id === filters.category)?.name ?? "Products")
-                : "All Products"}
-          </h2>
-          {!loading && (
-            <p className="text-sm text-muted mt-0.5">
-              {total} {total === 1 ? "product" : "products"} found
-            </p>
-          )}
-        </div>
-
-        {/* Search bar */}
-        <div className="relative sm:w-64">
-          <input
-            type="text"
-            value={searchInput}
-            onChange={(e) => setSearchInput(e.target.value)}
-            placeholder="Search products..."
-            className="input py-2.5 pr-8"
-          />
-          {searchInput && (
-            <button
-              onClick={() => { setSearchInput(""); setDSearch(""); }}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-muted
-                         hover:text-dark transition-colors"
-            >
-              <X className="w-4 h-4" />
-            </button>
-          )}
-        </div>
+      {/* Section header + mobile filter button */}
+      <div className="flex items-center justify-between mb-3">
+        <h2 className="text-lg font-bold text-dark dark:text-white">
+          {debouncedSearch
+            ? `Results for "${debouncedSearch}"`
+            : filters.category
+              ? (initialCategories.find((c) => c._id === filters.category)?.name ?? "Products")
+              : "All Products"}
+        </h2>
 
         {/* Mobile filter button */}
         <button
           onClick={() => setMobileFiltersOpen(true)}
-          className="lg:hidden flex items-center gap-2 btn-outline py-2.5 text-sm shrink-0 relative"
+          className="lg:hidden flex items-center gap-2 btn-outline py-2 text-sm shrink-0 relative"
         >
           <SlidersHorizontal className="w-4 h-4" />
           Filters
