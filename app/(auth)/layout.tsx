@@ -10,7 +10,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
             <Leaf className="w-5 h-5 text-white" />
           </span>
           <span className="text-xl font-bold text-dark">
-            Fresh<span className="text-primary">Cart</span>
+            Rapid<span className="text-primary">Mart</span>
           </span>
         </Link>
       </div>
