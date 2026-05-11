@@ -66,7 +66,9 @@ function Highlight({ text, query }: { text: string; query: string }) {
 export default function Navbar() {
   const { data: session } = useSession();
   const cartCount     = useCartStore((s) => s.items.reduce((n, i) => n + i.quantity, 0));
+  const clearCart     = useCartStore((s) => s.clearCart);
   const wishlistCount = useWishlistStore((s) => s.items.length);
+  const clearWishlist = useWishlistStore((s) => s.clear);
   const { info: pincodeInfo, setPincode, clearPincode } = usePincodeStore();
   const toggleCartSidebar = useCartSidebarStore((s) => s.toggle);
 
@@ -449,7 +451,7 @@ export default function Navbar() {
                         </Link>
                         <hr className="my-1 border-border" />
                         <button
-                          onClick={() => { setUserMenuOpen(false); signOut({ callbackUrl: "/" }); }}
+                          onClick={() => { setUserMenuOpen(false); clearCart(); clearWishlist(); signOut({ callbackUrl: "/" }); }}
                           className="flex items-center gap-3 w-full px-4 py-2.5 text-sm
                                      text-danger hover:bg-red-50 dark:hover:bg-red-950/40 transition-colors"
                         >
