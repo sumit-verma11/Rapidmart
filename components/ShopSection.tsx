@@ -3,7 +3,9 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { motion } from "framer-motion";
 import { useSearchParams, useRouter } from "next/navigation";
-import { SlidersHorizontal, X, ChevronRight, Leaf, RotateCcw, MapPin, Loader2 } from "lucide-react";
+import Link from "next/link";
+import Image from "next/image";
+import { SlidersHorizontal, X, ChevronRight, Leaf, RotateCcw, MapPin, Loader2, ArrowRight } from "lucide-react";
 import ProductCard from "@/components/ProductCard";
 import { usePincodeStore } from "@/store/pincode";
 import { useUserActivity } from "@/store/userActivity";
@@ -32,6 +34,86 @@ const CATEGORY_EMOJI: Record<string, string> = {
   "Snacks":              "🍿",
   "Meat & Seafood":      "🐟",
 };
+
+// Curated Unsplash images per category name (fallback when DB has no image)
+const CATEGORY_IMAGES: Record<string, string> = {
+  "Fresh Fruits":        "https://images.unsplash.com/photo-1610832958506-aa56368176cf?w=600&q=80",
+  "Fresh Vegetables":    "https://images.unsplash.com/photo-1540420773420-3366772f4999?w=600&q=80",
+  "Herbs & Seasonings":  "https://images.unsplash.com/photo-1615485500834-bc10199bc727?w=600&q=80",
+  "Milk":                "https://images.unsplash.com/photo-1550583724-b2692b85b150?w=600&q=80",
+  "Paneer & Tofu":       "https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?w=600&q=80",
+  "Curd & Buttermilk":   "https://images.unsplash.com/photo-1571210862729-78a52d3779a2?w=600&q=80",
+  "Butter & Cheese":     "https://images.unsplash.com/photo-1486297678162-eb2a19b0a32d?w=600&q=80",
+  "Eggs":                "https://images.unsplash.com/photo-1582722872445-44dc5f7e3c8f?w=600&q=80",
+  "Breads":              "https://images.unsplash.com/photo-1509440159596-0249088772ff?w=600&q=80",
+  "Cakes & Pastries":    "https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=600&q=80",
+  "Biscuits & Cookies":  "https://images.unsplash.com/photo-1499636136210-6f4ee915583e?w=600&q=80",
+  "Juices":              "https://images.unsplash.com/photo-1613478223719-2ab802602423?w=600&q=80",
+  "Cold Drinks":         "https://images.unsplash.com/photo-1581006852262-e4307cf6283a?w=600&q=80",
+  "Tea & Coffee":        "https://images.unsplash.com/photo-1544787219-7f47ccb76574?w=600&q=80",
+  "Water & Soda":        "https://images.unsplash.com/photo-1548839140-29a749e1cf4d?w=600&q=80",
+  "Chips & Namkeen":     "https://images.unsplash.com/photo-1566478989037-eec170784d0b?w=600&q=80",
+  "Instant Noodles":     "https://images.unsplash.com/photo-1569718212165-3a8278d5f624?w=600&q=80",
+  "Ready to Eat":        "https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=600&q=80",
+  "Chicken":             "https://images.unsplash.com/photo-1626082927389-6cd097cdc6ec?w=600&q=80",
+  "Fish":                "https://images.unsplash.com/photo-1535234780-1c571b79d21b?w=600&q=80",
+  "Grains & Staples":    "https://images.unsplash.com/photo-1586201375761-83865001e31c?w=600&q=80",
+  "Dry Fruits":          "https://images.unsplash.com/photo-1508061253366-f7da158b6d46?w=600&q=80",
+  "Pantry":              "https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?w=600&q=80",
+};
+
+// ─── Category Cards Grid ──────────────────────────────────────────────────────
+
+function CategoryCardsSection({ categories }: { categories: CategoryItem[] }) {
+  return (
+    <section className="mt-14 mb-4">
+      <div className="flex items-center justify-between mb-5">
+        <div>
+          <h2 className="text-xl font-bold text-dark dark:text-white">Shop by Category</h2>
+          <p className="text-sm text-muted mt-0.5">Browse all {categories.length} categories</p>
+        </div>
+        <Link
+          href="/categories"
+          className="flex items-center gap-1.5 text-sm font-semibold text-primary hover:underline shrink-0"
+        >
+          See all <ArrowRight className="w-3.5 h-3.5" />
+        </Link>
+      </div>
+
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
+        {categories.map((cat) => {
+          const imgSrc = cat.image || CATEGORY_IMAGES[cat.name] || "https://images.unsplash.com/photo-1542838132-92c53300491e?w=600&q=80";
+          return (
+            <Link
+              key={cat._id}
+              href={`/category/${cat.slug}`}
+              className="group relative rounded-2xl overflow-hidden aspect-[4/3] block shadow-sm
+                         hover:shadow-lg transition-all duration-300 hover:-translate-y-0.5"
+            >
+              <Image
+                src={imgSrc}
+                alt={cat.name}
+                fill
+                sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 20vw"
+                className="object-cover transition-transform duration-500 group-hover:scale-105"
+              />
+              {/* Gradient overlay */}
+              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
+              {/* Label */}
+              <div className="absolute bottom-0 left-0 right-0 p-3 flex items-end justify-between">
+                <p className="text-white font-bold text-sm leading-tight drop-shadow">{cat.name}</p>
+                <span className="w-6 h-6 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center
+                                 group-hover:bg-white/40 transition-colors shrink-0">
+                  <ArrowRight className="w-3 h-3 text-white" />
+                </span>
+              </div>
+            </Link>
+          );
+        })}
+      </div>
+    </section>
+  );
+}
 
 const SORT_OPTIONS = [
   { value: "createdAt", label: "Newest First" },
@@ -334,8 +416,10 @@ export default function ShopSection({ initialCategories }: Props) {
     else setLoadingMore(true);
     try {
       const params = new URLSearchParams();
+      const defaultView = !debouncedSearch && !filters.category && !filters.subcategory
+        && !filters.inStockOnly && !filters.organicOnly && filters.maxPrice >= 5000;
       params.set("page", String(page));
-      params.set("limit", "12");
+      params.set("limit", defaultView ? "50" : "12");
 
       if (debouncedSearch) params.set("search", debouncedSearch);
       if (filters.category)    params.set("category", filters.category);
@@ -412,6 +496,15 @@ export default function ShopSection({ initialCategories }: Props) {
     filters.inStockOnly,
     filters.organicOnly,
   ].filter(Boolean).length;
+
+  // Default view: no active filter, no search — show 50 products then category cards
+  const isDefaultView =
+    !debouncedSearch &&
+    !filters.category &&
+    !filters.subcategory &&
+    !filters.inStockOnly &&
+    !filters.organicOnly &&
+    filters.maxPrice >= 5000;
 
   // Reorder categories: preferred ones float to the front
   const orderedCategories = preferredCategoryIds.length > 0
@@ -562,19 +655,26 @@ export default function ShopSection({ initialCategories }: Props) {
                 ))}
               </motion.div>
 
-              {/* Infinite scroll sentinel */}
-              <div ref={sentinelRef} className="mt-8">
-                {loadingMore && (
-                  <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
-                    {Array.from({ length: 4 }).map((_, i) => <ProductSkeleton key={i} />)}
-                  </div>
-                )}
-                {!loadingMore && page >= totalPages && products.length > 0 && (
-                  <p className="text-center text-sm text-muted py-6">
-                    🎉 You&apos;ve seen all {total} products
-                  </p>
-                )}
-              </div>
+              {/* Infinite scroll sentinel — hidden in default view */}
+              {!isDefaultView && (
+                <div ref={sentinelRef} className="mt-8">
+                  {loadingMore && (
+                    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
+                      {Array.from({ length: 4 }).map((_, i) => <ProductSkeleton key={i} />)}
+                    </div>
+                  )}
+                  {!loadingMore && page >= totalPages && products.length > 0 && (
+                    <p className="text-center text-sm text-muted py-6">
+                      🎉 You&apos;ve seen all {total} products
+                    </p>
+                  )}
+                </div>
+              )}
+
+              {/* Category cards — shown after 50 products in default view */}
+              {isDefaultView && !loading && (
+                <CategoryCardsSection categories={orderedCategories} />
+              )}
             </>
           )}
         </div>
