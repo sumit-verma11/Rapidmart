@@ -9,12 +9,9 @@ const RIDERS = [
   { name: "Rider Two", email: "rider2@rapidmart.in", password: "Rider@5678" },
 ];
 
-export async function POST(req: Request) {
-  const { searchParams } = new URL(req.url);
+export async function POST() {
   const session = await getServerSession(authOptions);
-  const isAdmin = session?.user?.role === "admin";
-  const hasKey  = searchParams.get("key") === "rapidmart-seed-2025";
-  if (!isAdmin && !hasKey) {
+  if (session?.user?.role !== "admin") {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 
