@@ -134,9 +134,37 @@ export async function POST(req: NextRequest) {
       grandTotal,
     });
 
+    // Save delivery address to user profile if not already stored
+    const user = await User.findById(session.user.id).select("email name addresses").lean() as {
+      email: string; name: string;
+      addresses: { street: string; city: string; state: string; pincode: string }[];
+    } | null;
+
+    if (user) {
+      const alreadySaved = user.addresses?.some(
+        (a) =>
+          a.street.toLowerCase() === street.toLowerCase() &&
+          a.city.toLowerCase()   === city.toLowerCase()   &&
+          a.pincode              === pincode
+      );
+      if (!alreadySaved) {
+        await User.findByIdAndUpdate(session.user.id, {
+          $push: {
+            addresses: {
+              label:     "Home",
+              street,
+              city,
+              state,
+              pincode,
+              isDefault: !user.addresses?.length,
+            },
+          },
+        });
+      }
+    }
+
     // Send order confirmation email (non-blocking)
     if (process.env.GMAIL_USER && process.env.GMAIL_APP_PASSWORD) {
-      const user = await User.findById(session.user.id).select("email name").lean() as { email: string; name: string } | null;
       if (user?.email) {
         sendOrderConfirmation({
           to: user.email,
