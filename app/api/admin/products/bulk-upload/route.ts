@@ -129,12 +129,18 @@ export async function POST(req: NextRequest) {
       continue;
     }
 
+    // Resolve optional subCategory string → ObjectId
+    const subCategoryName = String(row["subCategory"] ?? "").trim();
+    const subCategoryId = subCategoryName
+      ? (categoryMap.get(subCategoryName.toLowerCase()) ?? null)
+      : null;
+
     try {
       await Product.create({
         name,
         slug,
         description,
-        subCategory:  String(row["subCategory"] ?? "").trim() || undefined,
+        subCategory:  subCategoryId,
         category:     categoryId,
         variants,
         images:       parseImages(row["images"]),
@@ -143,6 +149,7 @@ export async function POST(req: NextRequest) {
         isOrganic:    parseBoolean(row["isOrganic"]),
         isFeatured:   parseBoolean(row["isFeatured"]),
         isAvailable:  row["isAvailable"] === "" ? true : parseBoolean(row["isAvailable"]),
+        createdBy:    session.user.id,
       });
       successCount++;
       results.push({ row: rowNum, name, status: "success", message: "Created successfully" });
