@@ -198,25 +198,34 @@ function OrderDetail({ orderId }: { orderId: string }) {
         )}
       </div>
 
-      {/* Delivery partner stub — shown when out for delivery */}
+      {/* Live tracking — shown when out for delivery */}
       {displayStatus === "out_for_delivery" && (
-        <div className="bg-white dark:bg-gray-800 rounded-2xl p-4 mt-1 space-y-3 border border-gray-200 dark:border-gray-700">
-          <p className="font-semibold text-gray-900 dark:text-white text-sm">Delivery Partner</p>
-          {order.deliveryPartner?.name ? (
-            <p className="text-sm text-gray-500 dark:text-gray-400">
-              {order.deliveryPartner.name}
-              {order.deliveryPartner.phone && ` · ${order.deliveryPartner.phone}`}
-            </p>
-          ) : (
-            <p className="text-sm text-gray-500 dark:text-gray-400">Assigning partner…</p>
+        <div className="mt-1 space-y-3">
+          {order.deliveryPartner?.name && (
+            <div className="flex items-center gap-3 bg-orange-50 dark:bg-orange-950/30 border border-orange-200 dark:border-orange-800 rounded-2xl p-3">
+              <div className="w-9 h-9 rounded-full bg-orange-100 flex items-center justify-center font-bold text-orange-600 text-sm shrink-0">
+                {order.deliveryPartner.name[0]?.toUpperCase()}
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="font-semibold text-dark dark:text-white text-sm">{order.deliveryPartner.name}</p>
+                <p className="text-xs text-muted flex items-center gap-1">
+                  <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" /> On the way
+                </p>
+              </div>
+              {order.deliveryPartner.phone && (
+                <a href={`tel:${order.deliveryPartner.phone}`}
+                   className="flex items-center gap-1.5 bg-primary text-white rounded-xl px-3 py-1.5 text-xs font-semibold shrink-0">
+                  <MapPin className="w-3 h-3" /> Call
+                </a>
+              )}
+            </div>
           )}
-          <div className="bg-gray-100 dark:bg-gray-800 rounded-xl h-44 flex flex-col items-center justify-center gap-2">
-            <span className="text-3xl">🗺️</span>
-            <span className="text-sm text-muted">Live map tracking</span>
-            <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-100 text-amber-700">
-              Coming Soon
-            </span>
-          </div>
+          <Link
+            href={`/track/${orderId}`}
+            className="flex items-center justify-center gap-2 w-full bg-orange-500 hover:bg-orange-600 text-white rounded-2xl py-3 text-sm font-bold transition-colors"
+          >
+            <Truck className="w-4 h-4" /> Track Live Location
+          </Link>
         </div>
       )}
 

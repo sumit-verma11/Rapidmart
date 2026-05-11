@@ -2,7 +2,7 @@ import { Types } from "mongoose";
 
 // ─── Shared ───────────────────────────────────────────────────────────────────
 
-export type UserRole = "user" | "admin";
+export type UserRole = "user" | "admin" | "rider";
 
 // ─── Compatibility re-exports (used by UI layer) ──────────────────────────────
 
@@ -228,12 +228,14 @@ export interface IOrder {
   placedAt: Date;
   updatedAt: Date;
 
-  // Delivery partner stub (future live-tracking)
+  riderId?: Types.ObjectId | IUser | null;
+
   deliveryPartner?: {
     name?: string;
     phone?: string;
     lat?: number;
     lng?: number;
+    updatedAt?: Date;
   };
 }
 

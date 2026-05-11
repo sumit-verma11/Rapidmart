@@ -152,12 +152,18 @@ const OrderSchema = new Schema<IOrderDocument>(
       default: () => new Date(),
     },
 
-    // ── Delivery partner stub (future live-tracking feature)
+    // ── Delivery partner / rider
+    riderId: {
+      type: Schema.Types.ObjectId,
+      ref: "User",
+      default: null,
+    },
     deliveryPartner: {
-      name:  { type: String },
-      phone: { type: String },
-      lat:   { type: Number },
-      lng:   { type: Number },
+      name:      { type: String },
+      phone:     { type: String },
+      lat:       { type: Number },
+      lng:       { type: Number },
+      updatedAt: { type: Date },
     },
   },
   {
