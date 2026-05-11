@@ -267,7 +267,7 @@ export default function BulkUploadPage() {
                     {statusIcon(r.status)}
                     <span className="text-muted w-14 shrink-0">Row {r.row}</span>
                     <span className="font-medium text-dark truncate flex-1">{r.name}</span>
-                    <span className="text-muted text-xs shrink-0 text-right max-w-[200px] truncate">{r.message}</span>
+                    <span className="text-muted text-xs shrink-0 text-right break-all">{r.message}</span>
                   </div>
                 ))}
               </div>
