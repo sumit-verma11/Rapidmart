@@ -85,8 +85,7 @@ function LoginForm() {
             type="button"
             onClick={handleGoogleSignIn}
             disabled={googleLoading || loading}
-            className="flex items-center gap-3 border-2 border-primary/30
-                       bg-white text-dark rounded-2xl py-3 px-8
+            className="flex items-center gap-3 bg-primary text-white rounded-2xl py-3 px-8
                        text-sm font-semibold disabled:opacity-50 disabled:cursor-not-allowed shadow-sm"
           >
             {googleLoading ? (
