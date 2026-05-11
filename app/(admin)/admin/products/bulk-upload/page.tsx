@@ -4,7 +4,7 @@ import { useState, useRef, useCallback } from "react";
 import Link from "next/link";
 import {
   Upload, Download, CheckCircle2, XCircle, AlertCircle,
-  FileSpreadsheet, ArrowLeft, Loader2, ChevronDown, ChevronUp,
+  FileSpreadsheet, ArrowLeft, Loader2, ChevronDown, ChevronUp, Trash2,
 } from "lucide-react";
 import toast from "react-hot-toast";
 
@@ -43,9 +43,39 @@ export default function BulkUploadPage() {
   const [file,        setFile]       = useState<File | null>(null);
   const [dragging,    setDragging]   = useState(false);
   const [uploading,   setUploading]  = useState(false);
+  const [deleting,    setDeleting]   = useState(false);
   const [result,      setResult]     = useState<UploadResult | null>(null);
   const [showErrors,  setShowErrors] = useState(true);
   const inputRef = useRef<HTMLInputElement>(null);
+
+  const onDeleteUploaded = async () => {
+    if (!result) return;
+    const slugs = result.results
+      .filter(r => r.status === "success")
+      .map(r => r.name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, ""));
+    if (slugs.length === 0) { toast.error("No successful rows to delete"); return; }
+    if (!confirm(`Delete ${slugs.length} product(s) that were just uploaded?`)) return;
+    setDeleting(true);
+    try {
+      const res  = await fetch("/api/admin/products/bulk-upload", {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ slugs }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        toast.success(`${data.deleted} product(s) deleted`);
+        setResult(null);
+        setFile(null);
+      } else {
+        toast.error(data.error ?? "Delete failed");
+      }
+    } catch {
+      toast.error("Network error");
+    } finally {
+      setDeleting(false);
+    }
+  };
 
   const handleFile = (f: File) => {
     const ok = f.name.endsWith(".csv") || f.name.endsWith(".xlsx") || f.name.endsWith(".xls");
@@ -245,9 +275,21 @@ export default function BulkUploadPage() {
           </div>
 
           {result.summary.created > 0 && (
-            <Link href="/admin/products" className="btn-primary w-full py-3 flex items-center justify-center gap-2">
-              View Products
-            </Link>
+            <div className="flex gap-3">
+              <Link href="/admin/products" className="btn-primary flex-1 py-3 flex items-center justify-center gap-2">
+                View Products
+              </Link>
+              <button
+                onClick={onDeleteUploaded}
+                disabled={deleting}
+                className="flex items-center gap-2 px-5 py-3 rounded-xl border border-red-300 dark:border-red-800
+                           text-red-600 dark:text-red-400 text-sm font-semibold
+                           hover:bg-red-50 dark:hover:bg-red-950/30 transition-colors disabled:opacity-50"
+              >
+                {deleting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Trash2 className="w-4 h-4" />}
+                Delete Uploaded
+              </button>
+            </div>
           )}
         </div>
       )}

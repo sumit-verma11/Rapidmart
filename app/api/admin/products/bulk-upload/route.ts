@@ -166,6 +166,21 @@ export async function POST(req: NextRequest) {
   });
 }
 
+// DELETE — remove products by slug list
+export async function DELETE(req: NextRequest) {
+  const session = await requireAdmin();
+  if (!session) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+
+  const { slugs } = await req.json() as { slugs: string[] };
+  if (!Array.isArray(slugs) || slugs.length === 0) {
+    return NextResponse.json({ error: "slugs array required" }, { status: 400 });
+  }
+
+  await connectDB();
+  const result = await Product.deleteMany({ slug: { $in: slugs } });
+  return NextResponse.json({ success: true, deleted: result.deletedCount });
+}
+
 // GET — return a CSV template
 export async function GET() {
   const session = await requireAdmin();
