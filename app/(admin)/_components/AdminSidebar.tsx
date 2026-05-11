@@ -6,13 +6,14 @@ import { usePathname } from "next/navigation";
 import { signOut } from "next-auth/react";
 import {
   LayoutDashboard, Package, Tag, ShoppingBag, MapPin,
-  Leaf, LogOut, Menu, X, ChevronRight, Bell, BarChart2,
+  Leaf, LogOut, Menu, X, ChevronRight, Bell, BarChart2, Upload,
 } from "lucide-react";
 
 const NAV = [
   { href: "/admin/dashboard",   label: "Dashboard",   icon: LayoutDashboard },
   { href: "/admin/analytics",   label: "Analytics",   icon: BarChart2        },
   { href: "/admin/products",    label: "Products",     icon: Package          },
+  { href: "/admin/products/bulk-upload", label: "Bulk Upload", icon: Upload  },
   { href: "/admin/categories",  label: "Categories",   icon: Tag              },
   { href: "/admin/orders",      label: "Orders",       icon: ShoppingBag      },
   { href: "/admin/pincodes",    label: "Pincodes",     icon: MapPin           },

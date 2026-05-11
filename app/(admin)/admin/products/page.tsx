@@ -4,7 +4,7 @@ import { useEffect, useState, useCallback, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import {
-  Plus, Search, Edit2, Trash2, Loader2, RefreshCw, Package, ImageIcon, X, CheckCircle2,
+  Plus, Search, Edit2, Trash2, Loader2, RefreshCw, Package, ImageIcon, X, CheckCircle2, Upload,
 } from "lucide-react";
 import { formatPrice } from "@/lib/utils";
 import toast from "react-hot-toast";
@@ -249,6 +249,9 @@ export default function AdminProductsPage() {
           >
             <ImageIcon className="w-4 h-4" /> Fix All Images
           </button>
+          <Link href="/admin/products/bulk-upload" className="btn-secondary flex items-center gap-2">
+            <Upload className="w-4 h-4" /> Bulk Upload
+          </Link>
           <Link href="/admin/products/new" className="btn-primary flex items-center gap-2">
             <Plus className="w-4 h-4" /> Add Product
           </Link>
