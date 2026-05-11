@@ -4,7 +4,7 @@ import { Suspense, useState } from "react";
 import { signIn, getSession } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
-import { Eye, EyeOff, Mail, Lock, ArrowRight, Leaf } from "lucide-react";
+import { Eye, EyeOff, Mail, Lock, ArrowRight, Leaf, Bike } from "lucide-react";
 import toast from "react-hot-toast";
 
 // ─── Inner form (needs useSearchParams, must be inside Suspense) ──────────────
@@ -15,7 +15,6 @@ function LoginForm() {
   const callbackUrl  = searchParams.get("callbackUrl") || "/";
 
   const [form,          setForm]          = useState({ email: "", password: "" });
-  const [rememberMe,    setRememberMe]    = useState(true);
   const [showPw,        setShowPw]        = useState(false);
   const [loading,       setLoading]       = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
@@ -36,26 +35,26 @@ function LoginForm() {
     });
 
     if (res?.error) {
-      // NextAuth passes the message thrown inside authorize() as the error string.
-      // Fall back to a generic message for the CredentialsSignin code.
-      const msg =
-        res.error === "CredentialsSignin"
-          ? "Invalid email or password"
-          : res.error;
+      const msg = res.error === "CredentialsSignin" ? "Invalid email or password" : res.error;
       toast.error(msg);
       setLoading(false);
       return;
     }
 
-    toast.success("Welcome back! 🎉");
-
-    // Fetch the freshly-set session to read the role for redirect
     const session = await getSession();
-    if (session?.user?.role === "admin") {
-      router.push("/admin/dashboard");
-    } else {
-      router.push(callbackUrl === "/login" ? "/" : callbackUrl);
+    const role    = session?.user?.role;
+
+    if (role === "rider") {
+      toast.error("Use the Delivery Partner portal to sign in.");
+      setLoading(false);
+      return;
     }
+
+    toast.success("Welcome back!");
+
+    if (role === "admin") router.push("/admin/dashboard");
+    else                  router.push(callbackUrl === "/login" ? "/" : callbackUrl);
+
     router.refresh();
   }
 
@@ -64,23 +63,24 @@ function LoginForm() {
       <div className="bg-white dark:bg-gray-900 rounded-3xl p-8 shadow-modal border border-border">
 
         {/* ── Logo ────────────────────────────────────────────────────────── */}
-        <div className="flex justify-center mb-8">
+        <div className="flex justify-center mb-6">
           <Link href="/" className="flex items-center gap-2">
-            <span className="bg-primary rounded-xl p-2">
+            <span className="rounded-xl p-2 bg-primary">
               <Leaf className="w-5 h-5 text-white" />
             </span>
             <span className="text-xl font-extrabold text-dark">
-              Fresh<span className="text-primary">Cart</span>
+              Rapid<span className="text-primary">Mart</span>
             </span>
           </Link>
         </div>
 
-        <div className="text-center mb-7">
+        {/* ── Heading ─────────────────────────────────────────────────────── */}
+        <div className="text-center mb-6">
           <h1 className="text-2xl font-bold text-dark">Welcome back</h1>
           <p className="text-muted text-sm mt-1">Sign in to your RapidMart account</p>
         </div>
 
-        {/* Google sign-in */}
+        {/* ── Google ───────────────────────────────────────────────────────── */}
         <button
           type="button"
           onClick={handleGoogleSignIn}
@@ -103,20 +103,17 @@ function LoginForm() {
           Continue with Google
         </button>
 
-        {/* Divider */}
         <div className="flex items-center gap-3 mb-5">
           <div className="flex-1 h-px bg-border" />
           <span className="text-xs text-muted font-medium">or sign in with email</span>
           <div className="flex-1 h-px bg-border" />
         </div>
 
+        {/* ── Form ────────────────────────────────────────────────────────── */}
         <form onSubmit={handleSubmit} className="space-y-4">
 
-          {/* Email */}
           <div>
-            <label className="block text-sm font-medium text-dark mb-1.5">
-              Email address
-            </label>
+            <label className="block text-sm font-medium text-dark mb-1.5">Email address</label>
             <div className="relative">
               <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted" />
               <input
@@ -131,7 +128,6 @@ function LoginForm() {
             </div>
           </div>
 
-          {/* Password */}
           <div>
             <label className="block text-sm font-medium text-dark mb-1.5">Password</label>
             <div className="relative">
@@ -149,8 +145,7 @@ function LoginForm() {
                 type="button"
                 onClick={() => setShowPw((v) => !v)}
                 tabIndex={-1}
-                className="absolute right-3.5 top-1/2 -translate-y-1/2
-                           text-muted hover:text-dark transition-colors"
+                className="absolute right-3.5 top-1/2 -translate-y-1/2 text-muted hover:text-dark transition-colors"
                 aria-label={showPw ? "Hide password" : "Show password"}
               >
                 {showPw ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
@@ -158,38 +153,18 @@ function LoginForm() {
             </div>
           </div>
 
-          {/* Remember me */}
-          <div className="flex items-center gap-2.5">
-            <input
-              id="remember"
-              type="checkbox"
-              checked={rememberMe}
-              onChange={(e) => setRememberMe(e.target.checked)}
-              className="w-4 h-4 rounded accent-primary cursor-pointer"
-            />
-            <label
-              htmlFor="remember"
-              className="text-sm text-muted cursor-pointer select-none"
-            >
-              Remember me for 30 days
-            </label>
-          </div>
-
-          {/* Submit */}
           <button
             type="submit"
             disabled={loading}
-            className="btn-primary w-full flex items-center justify-center gap-2 mt-2"
+            className="w-full flex items-center justify-center gap-2 mt-2 py-3 rounded-2xl font-semibold text-white bg-primary hover:bg-primary/90 transition-colors disabled:opacity-60"
           >
             {loading ? (
-              <span className="w-5 h-5 border-2 border-white/30 border-t-white
-                              rounded-full animate-spin" />
+              <span className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
             ) : (
               <>Sign In <ArrowRight className="w-4 h-4" /></>
             )}
           </button>
         </form>
-
 
         <p className="text-center text-sm text-muted mt-6">
           Don&apos;t have an account?{" "}
@@ -197,22 +172,31 @@ function LoginForm() {
             Create one →
           </Link>
         </p>
+
+        {/* ── Delivery partner link ────────────────────────────────────────── */}
+        <div className="mt-5 pt-5 border-t border-border text-center">
+          <Link
+            href="/rider-login"
+            className="inline-flex items-center gap-2 text-xs text-muted hover:text-orange-500 transition-colors font-medium"
+          >
+            <Bike className="w-3.5 h-3.5" />
+            Delivery Partner? Sign in here
+          </Link>
+        </div>
       </div>
     </div>
   );
 }
 
-// ─── Page (wraps form in Suspense for useSearchParams) ────────────────────────
+// ─── Page ─────────────────────────────────────────────────────────────────────
 
 export default function LoginPage() {
   return (
     <Suspense
       fallback={
         <div className="w-full max-w-md">
-          <div className="bg-white rounded-3xl p-8 shadow-modal border border-border
-                          flex items-center justify-center h-64">
-            <span className="w-8 h-8 border-4 border-primary/30 border-t-primary
-                            rounded-full animate-spin" />
+          <div className="bg-white rounded-3xl p-8 shadow-modal border border-border flex items-center justify-center h-64">
+            <span className="w-8 h-8 border-4 border-primary/30 border-t-primary rounded-full animate-spin" />
           </div>
         </div>
       }
