@@ -38,6 +38,7 @@ export default function ProductCard({ product }: { product: IProduct }) {
     ? Math.round((1 - flashPrice / v.mrp) * 100)
     : discount;
 
+  const [imgError, setImgError] = useState(false);
   const [countdown, setCountdown] = useState<string | null>(null);
   useEffect(() => {
     if (!flashActive || !flashEndsAt) return;
@@ -142,11 +143,11 @@ export default function ProductCard({ product }: { product: IProduct }) {
 
           {/* Product image */}
           <div className="aspect-square relative">
-            {product.images[0] ? (
+            {product.images[0] && !imgError ? (
               <Image src={product.images[0]} alt={product.name} fill
                 className="object-contain p-4 transition-transform duration-400 group-hover:scale-105"
                 sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 20vw"
-                onError={e => { (e.target as HTMLImageElement).src = "/placeholder.svg"; }}
+                onError={() => setImgError(true)}
               />
             ) : (
               <div className="absolute inset-0 flex items-center justify-center text-5xl opacity-20">🛒</div>

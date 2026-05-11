@@ -4,10 +4,8 @@ import withPWA from "@ducanh2912/next-pwa";
 const nextConfig = {
   images: {
     remotePatterns: [
-      { protocol: "https", hostname: "images.unsplash.com" },
-      { protocol: "https", hostname: "cdn.pixabay.com" },
-      { protocol: "https", hostname: "res.cloudinary.com" },
-      { protocol: "https", hostname: "images.openfoodfacts.org" },
+      { protocol: "https", hostname: "**" },
+      { protocol: "http",  hostname: "**" },
     ],
   },
   experimental: {
