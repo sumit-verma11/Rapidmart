@@ -154,22 +154,6 @@ function LoginForm() {
           </button>
         </form>
 
-        {/* Demo credentials */}
-        <div className="mt-6 p-4 bg-accent rounded-2xl text-xs text-muted space-y-1.5">
-          <p className="font-semibold text-primary mb-1">Demo credentials</p>
-          <p>
-            User:{" "}
-            <span className="font-medium text-dark">arjun@example.com</span>
-            {" / "}
-            <span className="font-medium text-dark">User@1234</span>
-          </p>
-          <p>
-            Admin:{" "}
-            <span className="font-medium text-dark">admin@rapidmart.com</span>
-            {" / "}
-            <span className="font-medium text-dark">Admin@123</span>
-          </p>
-        </div>
 
         <p className="text-center text-sm text-muted mt-6">
           Don&apos;t have an account?{" "}
