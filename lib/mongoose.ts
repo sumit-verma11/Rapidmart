@@ -24,7 +24,6 @@ export async function connectDB(): Promise<typeof mongoose> {
     cached.promise = mongoose
       .connect(MONGO_URI, {
         bufferCommands: false,
-        dbName: "rapidmart",
         serverSelectionTimeoutMS: 5000,
       })
       .then((m) => {
