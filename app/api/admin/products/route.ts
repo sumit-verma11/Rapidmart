@@ -140,11 +140,19 @@ export async function DELETE(req: NextRequest) {
 
     const { searchParams } = new URL(req.url);
     const id = searchParams.get("id");
-    if (!id) {
-      return NextResponse.json({ success: false, error: "Product ID required" }, { status: 400 });
-    }
 
     await connectDB();
+
+    // Bulk delete — JSON body with { ids: string[] }
+    if (!id) {
+      const body = await req.json().catch(() => ({}));
+      const ids: string[] = body.ids ?? [];
+      if (ids.length === 0) {
+        return NextResponse.json({ success: false, error: "Product ID or ids[] required" }, { status: 400 });
+      }
+      const result = await Product.deleteMany({ _id: { $in: ids } });
+      return NextResponse.json({ success: true, deleted: result.deletedCount });
+    }
 
     await Product.findByIdAndDelete(id);
     return NextResponse.json({ success: true, message: "Product deleted" });

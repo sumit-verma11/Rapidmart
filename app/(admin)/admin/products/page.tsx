@@ -4,7 +4,8 @@ import { useEffect, useState, useCallback, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import {
-  Plus, Search, Edit2, Trash2, Loader2, RefreshCw, Package, ImageIcon, X, CheckCircle2, Upload,
+  Plus, Search, Edit2, Trash2, Loader2, RefreshCw, Package,
+  ImageIcon, X, CheckCircle2, Upload,
 } from "lucide-react";
 import { formatPrice } from "@/lib/utils";
 import toast from "react-hot-toast";
@@ -19,11 +20,7 @@ interface Product {
 }
 
 interface FixProgress {
-  total: number;
-  done: number;
-  current: string;
-  errors: string[];
-  finished: boolean;
+  total: number; done: number; current: string; errors: string[]; finished: boolean;
 }
 
 export default function AdminProductsPage() {
@@ -39,7 +36,10 @@ export default function AdminProductsPage() {
   const [fixProgress, setFixProgress] = useState<FixProgress | null>(null);
   const fixAbort                      = useRef(false);
 
-  // Fetch categories once for filter dropdown
+  // Multi-select
+  const [selected,      setSelected]      = useState<Set<string>>(new Set());
+  const [bulkDeleting,  setBulkDeleting]  = useState(false);
+
   useEffect(() => {
     fetch("/api/categories")
       .then((r) => r.json())
@@ -49,6 +49,7 @@ export default function AdminProductsPage() {
 
   const fetchProducts = useCallback(async () => {
     setLoading(true);
+    setSelected(new Set());
     const params = new URLSearchParams({ page: String(page), limit: "15" });
     if (search)    params.set("search",   search);
     if (catFilter) params.set("category", catFilter);
@@ -68,16 +69,83 @@ export default function AdminProductsPage() {
 
   useEffect(() => { fetchProducts(); }, [fetchProducts]);
 
-  // Debounce search
   useEffect(() => {
     const t = setTimeout(() => { setPage(1); }, 300);
     return () => clearTimeout(t);
   }, [search]);
 
+  // ── Selection helpers ──────────────────────────────────────────────────────
+  const allIds       = products.map((p) => p._id);
+  const allSelected  = allIds.length > 0 && allIds.every((id) => selected.has(id));
+  const someSelected = allIds.some((id) => selected.has(id));
+
+  function toggleOne(id: string) {
+    setSelected((prev) => {
+      const next = new Set(prev);
+      next.has(id) ? next.delete(id) : next.add(id);
+      return next;
+    });
+  }
+
+  function toggleAll() {
+    if (allSelected) {
+      setSelected(new Set());
+    } else {
+      setSelected(new Set(allIds));
+    }
+  }
+
+  // ── Single delete ──────────────────────────────────────────────────────────
+  async function deleteProduct(id: string, name: string) {
+    if (!confirm(`Delete "${name}"? This cannot be undone.`)) return;
+    setDeleting(id);
+    try {
+      const res = await fetch(`/api/admin/products?id=${id}`, { method: "DELETE" });
+      if (res.ok) {
+        setProducts((prev) => prev.filter((p) => p._id !== id));
+        setSelected((prev) => { const n = new Set(prev); n.delete(id); return n; });
+        toast.success("Product deleted");
+      } else {
+        toast.error("Delete failed");
+      }
+    } catch {
+      toast.error("Delete failed");
+    } finally {
+      setDeleting(null);
+    }
+  }
+
+  // ── Bulk delete ────────────────────────────────────────────────────────────
+  async function deleteSelected() {
+    const ids = [...selected];
+    if (ids.length === 0) return;
+    if (!confirm(`Delete ${ids.length} selected product(s)? This cannot be undone.`)) return;
+    setBulkDeleting(true);
+    try {
+      const res  = await fetch("/api/admin/products", {
+        method:  "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body:    JSON.stringify({ ids }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        setProducts((prev) => prev.filter((p) => !selected.has(p._id)));
+        setSelected(new Set());
+        toast.success(`${data.deleted} product(s) deleted`);
+      } else {
+        toast.error(data.error ?? "Bulk delete failed");
+      }
+    } catch {
+      toast.error("Network error");
+    } finally {
+      setBulkDeleting(false);
+    }
+  }
+
   async function toggleAvailable(id: string, current: boolean) {
     setToggling(id);
     try {
-      const res  = await fetch("/api/admin/products", {
+      const res = await fetch("/api/admin/products", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ id, isAvailable: !current }),
@@ -95,75 +163,41 @@ export default function AdminProductsPage() {
     }
   }
 
-  async function deleteProduct(id: string, name: string) {
-    if (!confirm(`Delete "${name}"? This cannot be undone.`)) return;
-    setDeleting(id);
-    try {
-      const res = await fetch(`/api/admin/products?id=${id}`, { method: "DELETE" });
-      if (res.ok) {
-        setProducts((prev) => prev.filter((p) => p._id !== id));
-        toast.success("Product deleted");
-      } else {
-        toast.error("Delete failed");
-      }
-    } catch {
-      toast.error("Delete failed");
-    } finally {
-      setDeleting(null);
-    }
-  }
-
   async function fixAllImages() {
-    // 1. Fetch the list of slugs with keyword mappings
     const metaRes = await fetch("/api/admin/fix-images");
     const meta    = await metaRes.json();
     if (!meta.success) { toast.error("Failed to load slug list"); return; }
 
     const slugs: string[] = meta.slugs;
     fixAbort.current = false;
-
     setFixProgress({ total: slugs.length, done: 0, current: "", errors: [], finished: false });
 
     let errors: string[] = [];
-
     for (let i = 0; i < slugs.length; i++) {
       if (fixAbort.current) break;
-
-      const slug = slugs[i];
-      setFixProgress((p) => p ? { ...p, done: i, current: slug } : p);
-
+      setFixProgress((p) => p ? { ...p, done: i, current: slugs[i] } : p);
       try {
         const res  = await fetch("/api/admin/fix-images", {
-          method:  "POST",
-          headers: { "Content-Type": "application/json" },
-          body:    JSON.stringify({ slug }),
+          method: "POST", headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ slug: slugs[i] }),
         });
         const data = await res.json();
-        if (!data.success) errors = [...errors, `${slug}: ${data.error}`];
+        if (!data.success) errors = [...errors, `${slugs[i]}: ${data.error}`];
       } catch {
-        errors = [...errors, `${slug}: network error`];
+        errors = [...errors, `${slugs[i]}: network error`];
       }
-
-      // Small client-side delay to avoid hammering Unsplash (API does 1 call per route invocation)
       await new Promise((r) => setTimeout(r, 200));
     }
 
-    setFixProgress((p) =>
-      p ? { ...p, done: slugs.length, current: "", errors, finished: true } : p
-    );
-
-    if (errors.length === 0) {
-      toast.success(`All ${slugs.length} product images updated!`);
-    } else {
-      toast(`${slugs.length - errors.length} updated, ${errors.length} failed`);
-    }
-
-    // Reload products list to show new images
+    setFixProgress((p) => p ? { ...p, done: slugs.length, current: "", errors, finished: true } : p);
+    if (errors.length === 0) toast.success(`All ${slugs.length} product images updated!`);
+    else toast(`${slugs.length - errors.length} updated, ${errors.length} failed`);
     fetchProducts();
   }
 
   return (
     <div className="space-y-6">
+
       {/* Fix-images progress modal */}
       {fixProgress && (
         <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4">
@@ -173,32 +207,24 @@ export default function AdminProductsPage() {
                 <ImageIcon className="w-5 h-5 text-primary" /> Fix All Images
               </h2>
               {fixProgress.finished && (
-                <button
-                  onClick={() => setFixProgress(null)}
-                  className="text-muted hover:text-dark transition-colors"
-                >
+                <button onClick={() => setFixProgress(null)} className="text-muted hover:text-dark transition-colors">
                   <X className="w-5 h-5" />
                 </button>
               )}
             </div>
-
-            {/* Progress bar */}
             <div className="space-y-1.5">
               <div className="flex justify-between text-xs text-muted">
                 <span>{fixProgress.done} / {fixProgress.total} products</span>
                 <span>{Math.round((fixProgress.done / fixProgress.total) * 100)}%</span>
               </div>
               <div className="w-full bg-gray-100 dark:bg-gray-700 rounded-full h-3 overflow-hidden">
-                <div
-                  className="h-full bg-primary rounded-full transition-all duration-300"
-                  style={{ width: `${(fixProgress.done / fixProgress.total) * 100}%` }}
-                />
+                <div className="h-full bg-primary rounded-full transition-all duration-300"
+                  style={{ width: `${(fixProgress.done / fixProgress.total) * 100}%` }} />
               </div>
               {fixProgress.current && !fixProgress.finished && (
                 <p className="text-xs text-muted truncate">Updating: {fixProgress.current}</p>
               )}
             </div>
-
             {fixProgress.finished ? (
               <div className="flex items-center gap-2 text-success text-sm font-semibold">
                 <CheckCircle2 className="w-5 h-5" />
@@ -210,23 +236,16 @@ export default function AdminProductsPage() {
                 Fetching from Unsplash… this takes ~{Math.ceil((fixProgress.total * 1.3) / 60)} min
               </div>
             )}
-
             {fixProgress.errors.length > 0 && (
               <details className="text-xs text-danger">
-                <summary className="cursor-pointer font-semibold">
-                  {fixProgress.errors.length} failed
-                </summary>
+                <summary className="cursor-pointer font-semibold">{fixProgress.errors.length} failed</summary>
                 <ul className="mt-1 space-y-0.5 list-disc list-inside opacity-80">
                   {fixProgress.errors.map((e, i) => <li key={i}>{e}</li>)}
                 </ul>
               </details>
             )}
-
             {!fixProgress.finished && (
-              <button
-                onClick={() => { fixAbort.current = true; }}
-                className="btn-outline text-sm py-1.5 w-full"
-              >
+              <button onClick={() => { fixAbort.current = true; }} className="btn-outline text-sm py-1.5 w-full">
                 Cancel
               </button>
             )}
@@ -277,13 +296,41 @@ export default function AdminProductsPage() {
           <option value="">All Categories</option>
           {categories.map((c) => <option key={c._id} value={c._id}>{c.name}</option>)}
         </select>
-        <button
-          onClick={() => fetchProducts()}
-          className="btn-ghost flex items-center gap-1.5 text-sm py-2.5"
-        >
+        <button onClick={() => fetchProducts()} className="btn-ghost flex items-center gap-1.5 text-sm py-2.5">
           <RefreshCw className="w-4 h-4" /> Refresh
         </button>
       </div>
+
+      {/* Bulk-action bar */}
+      {someSelected && (
+        <div className="flex items-center justify-between bg-red-50 dark:bg-red-950/40
+                        border border-red-200 dark:border-red-800 rounded-xl px-4 py-3">
+          <p className="text-sm font-semibold text-red-700 dark:text-red-400">
+            {selected.size} product{selected.size > 1 ? "s" : ""} selected
+          </p>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => setSelected(new Set())}
+              className="text-sm text-muted hover:text-dark transition-colors"
+            >
+              Clear
+            </button>
+            <button
+              onClick={deleteSelected}
+              disabled={bulkDeleting}
+              className="flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white
+                         text-sm font-semibold px-4 py-1.5 rounded-lg transition-colors
+                         disabled:opacity-50"
+            >
+              {bulkDeleting
+                ? <Loader2 className="w-4 h-4 animate-spin" />
+                : <Trash2 className="w-4 h-4" />
+              }
+              Delete {selected.size} selected
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* Table */}
       {loading ? (
@@ -302,6 +349,16 @@ export default function AdminProductsPage() {
             <table className="w-full text-sm">
               <thead className="bg-gray-50 dark:bg-gray-800 border-b border-border">
                 <tr>
+                  {/* Select-all checkbox */}
+                  <th className="px-4 py-3.5 w-10">
+                    <input
+                      type="checkbox"
+                      checked={allSelected}
+                      ref={(el) => { if (el) el.indeterminate = someSelected && !allSelected; }}
+                      onChange={toggleAll}
+                      className="w-4 h-4 rounded accent-primary cursor-pointer"
+                    />
+                  </th>
                   {["Product", "Category", "Price", "Stock", "Available", "Actions"].map((h) => (
                     <th key={h} className="text-left px-5 py-3.5 text-xs font-semibold
                                            text-muted uppercase tracking-wide whitespace-nowrap">
@@ -312,21 +369,35 @@ export default function AdminProductsPage() {
               </thead>
               <tbody className="divide-y divide-border">
                 {products.map((product) => {
-                  const v0 = product.variants[0];
+                  const v0         = product.variants[0];
+                  const isSelected = selected.has(product._id);
                   return (
-                    <tr key={product._id} className="hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors">
+                    <tr
+                      key={product._id}
+                      onClick={() => toggleOne(product._id)}
+                      className={`transition-colors cursor-pointer
+                        ${isSelected
+                          ? "bg-red-50 dark:bg-red-950/20"
+                          : "hover:bg-gray-50 dark:hover:bg-gray-800/50"
+                        }`}
+                    >
+                      {/* Checkbox */}
+                      <td className="px-4 py-4" onClick={(e) => e.stopPropagation()}>
+                        <input
+                          type="checkbox"
+                          checked={isSelected}
+                          onChange={() => toggleOne(product._id)}
+                          className="w-4 h-4 rounded accent-primary cursor-pointer"
+                        />
+                      </td>
+
                       {/* Product */}
                       <td className="px-5 py-4">
                         <div className="flex items-center gap-3">
                           <div className="relative w-10 h-10 rounded-xl overflow-hidden bg-accent shrink-0">
                             {product.images[0] ? (
-                              <Image
-                                src={product.images[0]}
-                                alt={product.name}
-                                fill
-                                className="object-cover"
-                                sizes="40px"
-                              />
+                              <Image src={product.images[0]} alt={product.name} fill
+                                className="object-cover" sizes="40px" />
                             ) : (
                               <div className="w-full h-full flex items-center justify-center text-lg">📦</div>
                             )}
@@ -335,21 +406,19 @@ export default function AdminProductsPage() {
                             <p className="font-semibold text-dark text-sm line-clamp-1">{product.name}</p>
                             <div className="flex gap-1.5 mt-0.5">
                               {product.isOrganic && (
-                                <span className="text-[10px] bg-green-100 text-success
-                                                 font-semibold px-1.5 rounded">Organic</span>
+                                <span className="text-[10px] bg-green-100 text-success font-semibold px-1.5 rounded">Organic</span>
                               )}
                               {product.isFeatured && (
-                                <span className="text-[10px] bg-amber-100 text-amber-700
-                                                 font-semibold px-1.5 rounded">Featured</span>
+                                <span className="text-[10px] bg-amber-100 text-amber-700 font-semibold px-1.5 rounded">Featured</span>
                               )}
                             </div>
                           </div>
                         </div>
                       </td>
+
                       {/* Category */}
-                      <td className="px-5 py-4 text-muted text-sm">
-                        {product.category?.name ?? "—"}
-                      </td>
+                      <td className="px-5 py-4 text-muted text-sm">{product.category?.name ?? "—"}</td>
+
                       {/* Price */}
                       <td className="px-5 py-4">
                         {v0 ? (
@@ -361,19 +430,21 @@ export default function AdminProductsPage() {
                           </div>
                         ) : "—"}
                       </td>
+
                       {/* Stock */}
                       <td className="px-5 py-4">
                         <span className={`text-xs font-bold px-2.5 py-1 rounded-full
-                                          ${product.stockQty === 0
-                                            ? "bg-red-100 text-danger"
-                                            : product.stockQty < 10
-                                              ? "bg-amber-100 text-amber-700"
-                                              : "bg-green-100 text-success"}`}>
+                          ${product.stockQty === 0
+                            ? "bg-red-100 text-danger"
+                            : product.stockQty < 10
+                              ? "bg-amber-100 text-amber-700"
+                              : "bg-green-100 text-success"}`}>
                           {product.stockQty === 0 ? "Out of Stock" : `${product.stockQty} units`}
                         </span>
                       </td>
+
                       {/* Available toggle */}
-                      <td className="px-5 py-4">
+                      <td className="px-5 py-4" onClick={(e) => e.stopPropagation()}>
                         <button
                           onClick={() => toggleAvailable(product._id, product.isAvailable)}
                           disabled={toggling === product._id}
@@ -384,21 +455,19 @@ export default function AdminProductsPage() {
                           {toggling === product._id ? (
                             <Loader2 className="w-3 h-3 animate-spin text-white absolute left-1/2 -translate-x-1/2" />
                           ) : (
-                            <span
-                              className={`inline-block h-4 w-4 rounded-full bg-white shadow-sm
-                                          transform transition-transform duration-200
-                                          ${product.isAvailable ? "translate-x-6" : "translate-x-1"}`}
-                            />
+                            <span className={`inline-block h-4 w-4 rounded-full bg-white shadow-sm
+                                              transform transition-transform duration-200
+                                              ${product.isAvailable ? "translate-x-6" : "translate-x-1"}`} />
                           )}
                         </button>
                       </td>
+
                       {/* Actions */}
-                      <td className="px-5 py-4">
+                      <td className="px-5 py-4" onClick={(e) => e.stopPropagation()}>
                         <div className="flex items-center gap-2">
                           <Link
                             href={`/admin/products/${product._id}/edit`}
-                            className="p-2 text-muted hover:text-primary hover:bg-accent
-                                       rounded-lg transition-colors"
+                            className="p-2 text-muted hover:text-primary hover:bg-accent rounded-lg transition-colors"
                             title="Edit"
                           >
                             <Edit2 className="w-4 h-4" />
@@ -406,8 +475,7 @@ export default function AdminProductsPage() {
                           <button
                             onClick={() => deleteProduct(product._id, product.name)}
                             disabled={deleting === product._id}
-                            className="p-2 text-muted hover:text-danger hover:bg-red-50
-                                       rounded-lg transition-colors disabled:opacity-40"
+                            className="p-2 text-muted hover:text-danger hover:bg-red-50 rounded-lg transition-colors disabled:opacity-40"
                             title="Delete"
                           >
                             {deleting === product._id
@@ -433,16 +501,12 @@ export default function AdminProductsPage() {
                   onClick={() => setPage((p) => Math.max(1, p - 1))}
                   disabled={page === 1}
                   className="btn-outline py-1.5 px-4 text-sm disabled:opacity-40"
-                >
-                  Prev
-                </button>
+                >Prev</button>
                 <button
                   onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
                   disabled={page === totalPages}
                   className="btn-outline py-1.5 px-4 text-sm disabled:opacity-40"
-                >
-                  Next
-                </button>
+                >Next</button>
               </div>
             </div>
           )}
