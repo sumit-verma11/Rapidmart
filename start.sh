@@ -16,9 +16,9 @@ else
 fi
 
 # ── 2. Start MongoDB container ───────────────────────────────
-if ! docker ps --format '{{.Names}}' | grep -q "^freshcart_mongo$"; then
+if ! docker ps --format '{{.Names}}' | grep -q "^rapidmart_mongo$"; then
   echo "🍃 Starting MongoDB..."
-  docker start freshcart_mongo 2>/dev/null || docker compose up -d mongodb
+  docker start rapidmart_mongo 2>/dev/null || docker compose up -d mongodb
   echo "   Waiting for MongoDB to be healthy..."
   until nc -z 127.0.0.1 27017 &>/dev/null; do sleep 2; done
   echo "   ✅ MongoDB is ready"

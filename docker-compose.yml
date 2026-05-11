@@ -3,12 +3,12 @@ version: "3.9"
 services:
   mongodb:
     image: mongo:7.0
-    container_name: freshcart_mongo
+    container_name: rapidmart_mongo
     restart: unless-stopped
     ports:
       - "27017:27017"
     environment:
-      MONGO_INITDB_DATABASE: freshcart
+      MONGO_INITDB_DATABASE: rapidmart
     volumes:
       - mongo_data:/data/db
     healthcheck:
@@ -20,7 +20,7 @@ services:
 
   app:
     build: .
-    container_name: freshcart_app
+    container_name: rapidmart_app
     restart: unless-stopped
     ports:
       - "3002:3000"
@@ -29,14 +29,14 @@ services:
         condition: service_healthy
     environment:
       NODE_ENV: production
-      MONGO_URI: mongodb://mongodb:27017/freshcart
+      MONGO_URI: mongodb://mongodb:27017/rapidmart
       NEXTAUTH_SECRET: ${NEXTAUTH_SECRET:-change-me-run-openssl-rand-base64-32}
-      NEXTAUTH_URL: ${NEXTAUTH_URL:-http://localhost:3002}
-      NEXT_PUBLIC_APP_NAME: FreshCart
-      NEXT_PUBLIC_APP_URL: ${NEXTAUTH_URL:-http://localhost:3002}
-    # Build (needs MongoDB available for route analysis), seed (idempotent), start
+      NEXTAUTH_URL: ${NEXTAUTH_URL:-https://rapidmart.in}
+      NEXT_PUBLIC_APP_NAME: RapidMart
+      NEXT_PUBLIC_APP_URL: ${NEXTAUTH_URL:-https://rapidmart.in}
+    # Build, seed (idempotent), start
     command: sh -c "npm run build && npm run seed && npm start"
 
 volumes:
   mongo_data:
-    name: freshcart_mongo_data
+    name: rapidmart_mongo_data
