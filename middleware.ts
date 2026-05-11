@@ -6,6 +6,11 @@ export default withAuth(
     const { pathname } = req.nextUrl;
     const token = req.nextauth.token;
 
+    // Rider visiting any non-rider page → send them to their portal
+    if (token?.role === "rider" && !pathname.startsWith("/rider")) {
+      return NextResponse.redirect(new URL("/rider", req.url));
+    }
+
     // Logged-in non-admin visiting an admin route → redirect home
     if (pathname.startsWith("/admin") && token?.role !== "admin") {
       return NextResponse.redirect(new URL("/", req.url));
@@ -37,10 +42,7 @@ export default withAuth(
 
 export const config = {
   matcher: [
-    "/cart/:path*",
-    "/checkout/:path*",
-    "/orders/:path*",
-    "/admin/:path*",
-    "/rider/:path*",
+    // All routes except static files, API, and rider-login
+    "/((?!api|_next/static|_next/image|icons|manifest|sw\\.js|workbox|worker|favicon|offline|rider-login).*)",
   ],
 };
