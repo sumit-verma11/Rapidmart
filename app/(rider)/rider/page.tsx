@@ -1,11 +1,11 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { useSession } from "next-auth/react";
+import { useSession, signOut } from "next-auth/react";
 import Link from "next/link";
 import {
   MapPin, Package, CheckCircle2, Navigation, Loader2,
-  RefreshCw, Clock, IndianRupee, Bike, ChevronRight,
+  RefreshCw, Clock, IndianRupee, Bike, ChevronRight, LogOut,
 } from "lucide-react";
 import toast from "react-hot-toast";
 import { formatPrice } from "@/lib/utils";
@@ -102,9 +102,18 @@ export default function RiderDashboard() {
               <p className="text-green-200 text-xs">Delivery Partner</p>
             </div>
           </div>
-          <button onClick={fetchOrders} className="p-2 rounded-xl bg-white/10 hover:bg-white/20 transition-colors">
-            <RefreshCw className="w-4 h-4" />
-          </button>
+          <div className="flex items-center gap-2">
+            <button onClick={fetchOrders} className="p-2 rounded-xl bg-white/10 hover:bg-white/20 transition-colors">
+              <RefreshCw className="w-4 h-4" />
+            </button>
+            <button
+              onClick={() => signOut({ callbackUrl: "/rider-login" })}
+              className="p-2 rounded-xl bg-white/10 hover:bg-red-500/60 transition-colors"
+              title="Sign out"
+            >
+              <LogOut className="w-4 h-4" />
+            </button>
+          </div>
         </div>
 
         {/* Stats */}
