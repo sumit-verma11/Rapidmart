@@ -85,9 +85,9 @@ function LoginForm() {
             type="button"
             onClick={handleGoogleSignIn}
             disabled={googleLoading || loading}
-            className="flex items-center gap-3 border-2 border-primary/30 hover:border-primary
-                       bg-white hover:bg-primary/5 text-dark rounded-2xl py-3 px-8
-                       text-sm font-semibold transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-sm"
+            className="flex items-center gap-3 border-2 border-primary/30
+                       bg-white text-dark rounded-2xl py-3 px-8
+                       text-sm font-semibold disabled:opacity-50 disabled:cursor-not-allowed shadow-sm"
           >
             {googleLoading ? (
               <span className="w-5 h-5 border-2 border-primary/30 border-t-primary rounded-full animate-spin" />
