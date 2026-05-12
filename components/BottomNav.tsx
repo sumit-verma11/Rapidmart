@@ -19,8 +19,7 @@ export default function BottomNav() {
   const cartCount   = useCartStore((s) => s.items.reduce((n, i) => n + i.quantity, 0));
 
   return (
-    <nav className="lg:hidden fixed bottom-0 inset-x-0 z-40 bg-white border-t border-border
-                    safe-area-inset-bottom">
+    <nav className="lg:hidden fixed bottom-0 inset-x-0 z-40 bg-primary safe-area-inset-bottom">
       <div className="flex items-stretch h-16">
         {NAV_ITEMS.map(({ href, label, icon: Icon }) => {
           const isActive = href === "/"
@@ -35,12 +34,12 @@ export default function BottomNav() {
               onClick={() => haptic(20)}
               className={`flex-1 flex flex-col items-center justify-center gap-1 text-[10px]
                           font-semibold transition-colors relative
-                          ${isActive ? "text-primary" : "text-muted hover:text-dark"}`}
+                          ${isActive ? "text-white" : "text-white/50"}`}
             >
               <div className="relative">
                 <Icon className={`w-5 h-5 ${isActive ? "stroke-[2.5]" : ""}`} />
                 {isCart && cartCount > 0 && (
-                  <span className="absolute -top-1.5 -right-1.5 bg-primary text-white text-[9px]
+                  <span className="absolute -top-1.5 -right-1.5 bg-white text-primary text-[9px]
                                    font-bold rounded-full w-4 h-4 flex items-center justify-center
                                    leading-none">
                     {cartCount > 9 ? "9+" : cartCount}

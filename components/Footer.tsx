@@ -55,19 +55,19 @@ const SOCIALS = [
 
 export default function Footer() {
   return (
-    <footer className="bg-gray-950 dark:bg-black text-white mt-auto">
+    <footer className="bg-primary text-white mt-auto">
       {/* Gradient top accent line */}
       <div className="h-px bg-gradient-to-r from-transparent via-primary to-transparent opacity-60" />
 
       {/* Newsletter strip */}
-      <div className="border-b border-white/8">
+      <div className="border-b border-white/15">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8
                         flex flex-col sm:flex-row items-center justify-between gap-5">
           <div>
             <p className="font-semibold text-white text-sm">
               🌿 Stay fresh — get weekly deals &amp; recipes
             </p>
-            <p className="text-gray-400 text-xs mt-0.5">
+            <p className="text-green-200 text-xs mt-0.5">
               Join 50,000+ shoppers. Unsubscribe any time.
             </p>
           </div>
@@ -90,7 +90,7 @@ export default function Footer() {
                 className="h-16 w-auto object-contain"
               />
             </div>
-            <p className="text-gray-400 text-sm leading-relaxed mb-6">
+            <p className="text-green-200 text-sm leading-relaxed mb-6">
               Premium groceries delivered fresh to your doorstep. We partner with
               local farmers and trusted brands to bring you the best.
             </p>
@@ -102,8 +102,8 @@ export default function Footer() {
                   key={label}
                   href={href}
                   aria-label={label}
-                  className="w-9 h-9 rounded-xl bg-white/8 border border-white/10
-                             flex items-center justify-center text-gray-400
+                  className="w-9 h-9 rounded-xl bg-white/10 border border-white/10
+                             flex items-center justify-center text-green-200
                              hover:bg-primary hover:text-white hover:border-primary
                              transition-all duration-200"
                 >
@@ -114,12 +114,12 @@ export default function Footer() {
 
             {/* App badges */}
             <div className="flex gap-2 mt-5 flex-wrap">
-              <span className="flex items-center gap-1.5 text-xs bg-white/8 border border-white/10
-                               px-3 py-1.5 rounded-lg font-medium text-gray-300">
+              <span className="flex items-center gap-1.5 text-xs bg-white/10 border border-white/10
+                               px-3 py-1.5 rounded-lg font-medium text-green-100">
                 🍎 App Store
               </span>
-              <span className="flex items-center gap-1.5 text-xs bg-white/8 border border-white/10
-                               px-3 py-1.5 rounded-lg font-medium text-gray-300">
+              <span className="flex items-center gap-1.5 text-xs bg-white/10 border border-white/10
+                               px-3 py-1.5 rounded-lg font-medium text-green-100">
                 🤖 Google Play
               </span>
             </div>
@@ -127,7 +127,7 @@ export default function Footer() {
 
           {/* Categories */}
           <div>
-            <h3 className="font-semibold text-xs uppercase tracking-widest text-gray-500 mb-5">
+            <h3 className="font-semibold text-xs uppercase tracking-widest text-green-300 mb-5">
               Shop by Category
             </h3>
             <ul className="space-y-2.5">
@@ -135,7 +135,7 @@ export default function Footer() {
                 <li key={label}>
                   <Link
                     href={`/category/${encodeURIComponent(label)}`}
-                    className="flex items-center gap-2 text-sm text-gray-400
+                    className="flex items-center gap-2 text-sm text-green-200
                                hover:text-secondary transition-colors group"
                   >
                     <span className="text-base leading-none">{emoji}</span>
@@ -150,7 +150,7 @@ export default function Footer() {
 
           {/* Quick links */}
           <div>
-            <h3 className="font-semibold text-xs uppercase tracking-widest text-gray-500 mb-5">
+            <h3 className="font-semibold text-xs uppercase tracking-widest text-green-300 mb-5">
               Quick Links
             </h3>
             <ul className="space-y-2.5">
@@ -158,7 +158,7 @@ export default function Footer() {
                 <li key={label}>
                   <Link
                     href={href}
-                    className="text-sm text-gray-400 hover:text-secondary
+                    className="text-sm text-green-200 hover:text-secondary
                                transition-colors group flex items-center gap-1.5"
                   >
                     <span className="group-hover:translate-x-0.5 transition-transform duration-150">
@@ -172,18 +172,18 @@ export default function Footer() {
 
           {/* Contact */}
           <div>
-            <h3 className="font-semibold text-xs uppercase tracking-widest text-gray-500 mb-5">
+            <h3 className="font-semibold text-xs uppercase tracking-widest text-green-300 mb-5">
               Contact Us
             </h3>
             <ul className="space-y-3.5 mb-6">
-              <li className="flex items-start gap-3 text-sm text-gray-400">
+              <li className="flex items-start gap-3 text-sm text-green-200">
                 <MapPin className="w-4 h-4 text-secondary shrink-0 mt-0.5" />
                 Raja Bazar, Motihari — 845401, Bihar, India
               </li>
               <li>
                 <a
                   href="tel:+918521618863"
-                  className="flex items-center gap-3 text-sm text-gray-400 hover:text-white transition-colors"
+                  className="flex items-center gap-3 text-sm text-green-200 hover:text-white transition-colors"
                 >
                   <Phone className="w-4 h-4 text-secondary shrink-0" />
                   +91 85216 18863
@@ -192,7 +192,7 @@ export default function Footer() {
               <li>
                 <a
                   href="mailto:support@rapidmart.in"
-                  className="flex items-center gap-3 text-sm text-gray-400 hover:text-white transition-colors"
+                  className="flex items-center gap-3 text-sm text-green-200 hover:text-white transition-colors"
                 >
                   <Mail className="w-4 h-4 text-secondary shrink-0" />
                   support@rapidmart.in
@@ -202,15 +202,15 @@ export default function Footer() {
 
             {/* Payment methods */}
             <div>
-              <p className="text-xs text-gray-500 mb-3 font-medium uppercase tracking-wider">
+              <p className="text-xs text-green-300 mb-3 font-medium uppercase tracking-wider">
                 We Accept
               </p>
               <div className="flex gap-2 flex-wrap">
                 {["UPI", "Visa", "Mastercard", "COD"].map((p) => (
                   <span
                     key={p}
-                    className="text-xs bg-white/8 border border-white/10 px-3 py-1
-                               rounded-lg font-medium text-gray-300"
+                    className="text-xs bg-white/10 border border-white/10 px-3 py-1
+                               rounded-lg font-medium text-green-100"
                   >
                     {p}
                   </span>
@@ -222,16 +222,16 @@ export default function Footer() {
       </div>
 
       {/* Bottom bar */}
-      <div className="border-t border-white/8">
+      <div className="border-t border-white/15">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5
                         flex flex-col sm:flex-row items-center justify-between gap-3
-                        text-xs text-gray-500">
+                        text-xs text-green-300">
           <p>© {new Date().getFullYear()} RapidMart. All rights reserved.</p>
           <div className="flex items-center gap-4">
             <span>Made with 💚 in India</span>
-            <span className="text-gray-700">·</span>
-            <Link href="/terms" className="hover:text-gray-300 transition-colors">Terms</Link>
-            <Link href="/privacy" className="hover:text-gray-300 transition-colors">Privacy</Link>
+            <span className="text-green-600">·</span>
+            <Link href="/terms" className="hover:text-green-100 transition-colors">Terms</Link>
+            <Link href="/privacy" className="hover:text-green-100 transition-colors">Privacy</Link>
           </div>
         </div>
       </div>
