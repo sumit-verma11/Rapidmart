@@ -8,6 +8,7 @@ import { createProductSchema } from "@/lib/validators";
 import { ZodError } from "zod";
 
 export const dynamic = "force-dynamic";
+export const revalidate = 0;
 
 export async function GET(req: NextRequest) {
   try {
@@ -75,7 +76,9 @@ export async function GET(req: NextRequest) {
       Product.countDocuments(query),
     ]);
 
-    return paginated(products, page, limit, total);
+    const response = paginated(products, page, limit, total);
+    response.headers.set("Cache-Control", "public, s-maxage=60, stale-while-revalidate=120");
+    return response;
   } catch (error) {
     console.error("[PRODUCTS GET]", error);
     return fail("Internal server error", 500);
