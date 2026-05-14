@@ -24,6 +24,8 @@ export interface CategoryItem {
 
 interface Props {
   initialCategories: CategoryItem[];
+  initialProducts?:  IProduct[];
+  initialTotal?:     number;
 }
 
 const CATEGORY_EMOJI: Record<string, string> = {
@@ -349,7 +351,7 @@ const DEFAULT_FILTERS: FilterState = {
 
 // ─── Main component ───────────────────────────────────────────────────────────
 
-export default function ShopSection({ initialCategories }: Props) {
+export default function ShopSection({ initialCategories, initialProducts = [], initialTotal = 0 }: Props) {
   const router       = useRouter();
   const searchParams = useSearchParams();
   const { info: pincodeInfo } = usePincodeStore();
@@ -363,17 +365,18 @@ export default function ShopSection({ initialCategories }: Props) {
     category: searchParams.get("category") ?? "",
   });
   const [page, setPage]                 = useState(1);
-  const [products, setProducts]         = useState<IProduct[]>([]);
-  const [totalPages, setTotalPages]     = useState(1);
-  const [total, setTotal]               = useState(0);
-  const [loading, setLoading]           = useState(true);
+  const [products, setProducts]         = useState<IProduct[]>(initialProducts);
+  const [totalPages, setTotalPages]     = useState(Math.max(1, Math.ceil(initialTotal / 50)));
+  const [total, setTotal]               = useState(initialTotal);
+  const [loading, setLoading]           = useState(initialProducts.length === 0);
   const [loadingMore, setLoadingMore]   = useState(false);
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
   const [subcategories, setSubcategories] = useState<CategoryItem[]>([]);
   const [refreshKey, setRefreshKey]     = useState(0);
 
-  const searchTimer = useRef<ReturnType<typeof setTimeout>>();
-  const sentinelRef = useRef<HTMLDivElement>(null);
+  const searchTimer    = useRef<ReturnType<typeof setTimeout>>();
+  const sentinelRef    = useRef<HTMLDivElement>(null);
+  const initialLoadRef = useRef(initialProducts.length > 0);
 
   const { isPulling, pullProgress, isRefreshing } = usePullToRefresh({
     onRefresh: () => setRefreshKey((k) => k + 1),
@@ -411,6 +414,11 @@ export default function ShopSection({ initialCategories }: Props) {
 
   // Fetch products when any filter/search/page changes
   const fetchProducts = useCallback(async () => {
+    // Skip the very first fetch when server already provided initialProducts
+    if (initialLoadRef.current) {
+      initialLoadRef.current = false;
+      return;
+    }
     const isFirstPage = page === 1;
     if (isFirstPage) setLoading(true);
     else setLoadingMore(true);

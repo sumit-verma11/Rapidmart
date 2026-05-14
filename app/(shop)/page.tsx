@@ -2,23 +2,36 @@ export const revalidate = 60;
 import { Suspense } from "react";
 import { connectDB } from "@/lib/mongoose";
 import Category from "@/models/Category";
+import Product from "@/models/Product";
 import HeroSection from "./_components/HeroSection";
 import ShopSection, { CategoryItem } from "@/components/ShopSection";
 import HomepageRecentlyViewed from "@/components/HomepageRecentlyViewed";
 import FlashSaleBanner from "@/components/FlashSaleBanner";
+import { IProduct } from "@/types";
 
-async function getCategories(): Promise<CategoryItem[]> {
+async function getInitialData(): Promise<{ categories: CategoryItem[]; products: IProduct[]; total: number }> {
   await connectDB();
-  const cats = await Category.find({ isActive: true, parentCategory: null })
-    .sort({ sortOrder: 1, name: 1 }).lean();
-  return cats.map((c) => ({
+  const [cats, products, total] = await Promise.all([
+    Category.find({ isActive: true, parentCategory: null })
+      .sort({ sortOrder: 1, name: 1 }).lean(),
+    Product.find({ isAvailable: true })
+      .populate("category", "name slug")
+      .sort({ createdAt: -1 })
+      .limit(50)
+      .lean(),
+    Product.countDocuments({ isAvailable: true }),
+  ]);
+
+  const categories = cats.map((c) => ({
     _id: c._id.toString(), name: c.name, slug: c.slug,
     image: c.image, description: c.description,
   }));
+
+  return { categories, products: JSON.parse(JSON.stringify(products)), total };
 }
 
 export default async function HomePage() {
-  const categories = await getCategories();
+  const { categories, products, total } = await getInitialData();
 
   return (
     <div className="bg-gray-50 dark:bg-gray-950">
@@ -55,7 +68,7 @@ export default async function HomePage() {
             </div>
           </div>
         }>
-          <ShopSection initialCategories={categories} />
+          <ShopSection initialCategories={categories} initialProducts={products} initialTotal={total} />
         </Suspense>
       </div>
     </div>
