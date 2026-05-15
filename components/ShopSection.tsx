@@ -664,7 +664,7 @@ export default function ShopSection({ initialCategories, initialProducts = [], i
                 initial="hidden"
                 animate="visible"
               >
-                {products.map((product) => (
+                {products.map((product, idx) => (
                   <motion.div
                     key={product._id.toString()}
                     variants={{
@@ -672,7 +672,7 @@ export default function ShopSection({ initialCategories, initialProducts = [], i
                       visible:  { opacity: 1, y: 0, transition: { type: "spring", stiffness: 300, damping: 25 } },
                     }}
                   >
-                    <ProductCard product={product} />
+                    <ProductCard product={product} priority={idx < 4} />
                   </motion.div>
                 ))}
               </motion.div>

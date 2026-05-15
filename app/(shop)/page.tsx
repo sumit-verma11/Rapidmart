@@ -37,14 +37,10 @@ const getInitialData = unstable_cache(
   { revalidate: 300 }
 );
 
-export default async function HomePage({
-  searchParams,
-}: {
-  searchParams?: { search?: string; category?: string };
-}) {
+// No searchParams prop — keeps this page ISR-cacheable (revalidate=300).
+// URL param sync happens client-side via SearchParamsSync inside ShopSection.
+export default async function HomePage() {
   const { categories, products, total } = await getInitialData();
-  const initialSearch   = searchParams?.search   ?? "";
-  const initialCategory = searchParams?.category ?? "";
 
   return (
     <div className="bg-gray-50 dark:bg-gray-950">
@@ -56,8 +52,6 @@ export default async function HomePage({
           initialCategories={categories}
           initialProducts={products}
           initialTotal={total}
-          initialSearch={initialSearch}
-          initialCategory={initialCategory}
         />
       </div>
     </div>

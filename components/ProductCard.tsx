@@ -14,7 +14,7 @@ import { trackAddToCart, trackWishlistAdd, trackWishlistRemove } from "@/lib/ana
 import toast from "react-hot-toast";
 import { haptic } from "@/lib/haptics";
 
-export default function ProductCard({ product }: { product: IProduct }) {
+export default function ProductCard({ product, priority = false }: { product: IProduct; priority?: boolean }) {
   const { items, addItem, updateQuantity } = useCartStore();
   const { toggle, has } = useWishlistStore();
   const { hasOrdered } = useUserActivity();
@@ -147,6 +147,7 @@ export default function ProductCard({ product }: { product: IProduct }) {
               <Image src={product.images[0]} alt={product.name} fill
                 className="object-contain p-4 transition-transform duration-400 group-hover:scale-105"
                 sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 20vw"
+                priority={priority}
                 onError={() => setImgError(true)}
               />
             ) : (
