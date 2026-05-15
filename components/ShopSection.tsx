@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback, useRef } from "react";
+import { useState, useEffect, useCallback, useRef, Suspense } from "react";
 import { motion } from "framer-motion";
 import { useSearchParams, useRouter } from "next/navigation";
 import Link from "next/link";
@@ -26,6 +26,19 @@ interface Props {
   initialCategories: CategoryItem[];
   initialProducts?:  IProduct[];
   initialTotal?:     number;
+  initialSearch?:    string;
+  initialCategory?:  string;
+}
+
+// Isolated so only this tiny component triggers the Suspense boundary,
+// not the entire ShopSection.
+function SearchParamsSync({ onSync }: { onSync: (search: string, category: string) => void }) {
+  const searchParams = useSearchParams();
+  useEffect(() => {
+    onSync(searchParams.get("search") ?? "", searchParams.get("category") ?? "");
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchParams]);
+  return null;
 }
 
 const CATEGORY_EMOJI: Record<string, string> = {
@@ -351,18 +364,16 @@ const DEFAULT_FILTERS: FilterState = {
 
 // ─── Main component ───────────────────────────────────────────────────────────
 
-export default function ShopSection({ initialCategories, initialProducts = [], initialTotal = 0 }: Props) {
-  const router       = useRouter();
-  const searchParams = useSearchParams();
+export default function ShopSection({ initialCategories, initialProducts = [], initialTotal = 0, initialSearch = "", initialCategory = "" }: Props) {
+  const router = useRouter();
   const { info: pincodeInfo } = usePincodeStore();
   const { preferredCategoryIds } = useUserActivity();
 
-  // Init search from URL param
-  const [searchInput, setSearchInput]   = useState(searchParams.get("search") ?? "");
-  const [debouncedSearch, setDSearch]   = useState(searchParams.get("search") ?? "");
+  const [searchInput, setSearchInput]   = useState(initialSearch);
+  const [debouncedSearch, setDSearch]   = useState(initialSearch);
   const [filters, setFilters]           = useState<FilterState>({
     ...DEFAULT_FILTERS,
-    category: searchParams.get("category") ?? "",
+    category: initialCategory,
   });
   const [page, setPage]                 = useState(1);
   const [products, setProducts]         = useState<IProduct[]>(initialProducts);
@@ -392,16 +403,14 @@ export default function ShopSection({ initialCategories, initialProducts = [], i
     return () => clearTimeout(searchTimer.current);
   }, [searchInput]);
 
-  // Sync URL params whenever they change (covers Navbar category links + search)
-  useEffect(() => {
-    const q   = searchParams.get("search") ?? "";
-    const cat = searchParams.get("category") ?? "";
+  // Called by SearchParamsSync when URL params change (Navbar category links, search bar)
+  const handleParamsSync = useCallback((q: string, cat: string) => {
     setSearchInput(q);
     setDSearch(q);
     setFilters((f) => ({ ...f, category: cat, subcategory: "" }));
     setPage(1);
     setProducts([]);
-  }, [searchParams]);
+  }, []);
 
   // Load subcategories when category changes
   useEffect(() => {
@@ -526,6 +535,11 @@ export default function ShopSection({ initialCategories, initialProducts = [], i
 
   return (
     <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+
+      {/* Sync URL search/category params without blocking SSR */}
+      <Suspense fallback={null}>
+        <SearchParamsSync onSync={handleParamsSync} />
+      </Suspense>
 
       {/* Pull-to-refresh indicator */}
       <div
