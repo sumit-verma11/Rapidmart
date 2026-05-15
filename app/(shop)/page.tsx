@@ -1,4 +1,5 @@
-export const revalidate = 60;
+export const revalidate = 300;
+import { unstable_cache } from "next/cache";
 import { Suspense } from "react";
 import { connectDB } from "@/lib/mongoose";
 import Category from "@/models/Category";
@@ -9,26 +10,35 @@ import HomepageRecentlyViewed from "@/components/HomepageRecentlyViewed";
 import FlashSaleBanner from "@/components/FlashSaleBanner";
 import { IProduct } from "@/types";
 
-async function getInitialData(): Promise<{ categories: CategoryItem[]; products: IProduct[]; total: number }> {
-  await connectDB();
-  const [cats, products, total] = await Promise.all([
-    Category.find({ isActive: true, parentCategory: null })
-      .sort({ sortOrder: 1, name: 1 }).lean(),
-    Product.find({ isAvailable: true })
-      .populate("category", "name slug")
-      .sort({ createdAt: -1 })
-      .limit(50)
-      .lean(),
-    Product.countDocuments({ isAvailable: true }),
-  ]);
+// Cached for 5 minutes across ALL Vercel function instances.
+// Cold starts skip the 2-second Atlas connection entirely.
+const getInitialData = unstable_cache(
+  async (): Promise<{ categories: CategoryItem[]; products: IProduct[]; total: number }> => {
+    await connectDB();
+    const [cats, products, total] = await Promise.all([
+      Category.find({ isActive: true, parentCategory: null })
+        .sort({ sortOrder: 1, name: 1 })
+        .select("name slug image description")
+        .lean(),
+      Product.find({ isAvailable: true })
+        .populate("category", "name slug")
+        .sort({ createdAt: -1 })
+        .select("name slug images variants stockQty isAvailable isOrganic isFeatured category flashSale")
+        .limit(20)
+        .lean(),
+      Product.countDocuments({ isAvailable: true }),
+    ]);
 
-  const categories = cats.map((c) => ({
-    _id: c._id.toString(), name: c.name, slug: c.slug,
-    image: c.image, description: c.description,
-  }));
+    const categories = cats.map((c) => ({
+      _id: c._id.toString(), name: c.name, slug: c.slug,
+      image: c.image, description: c.description,
+    }));
 
-  return { categories, products: JSON.parse(JSON.stringify(products)), total };
-}
+    return { categories, products: JSON.parse(JSON.stringify(products)), total };
+  },
+  ["homepage-initial-data"],
+  { revalidate: 300 }
+);
 
 export default async function HomePage() {
   const { categories, products, total } = await getInitialData();

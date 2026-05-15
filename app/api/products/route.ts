@@ -77,7 +77,7 @@ export async function GET(req: NextRequest) {
     ]);
 
     const response = paginated(products, page, limit, total);
-    response.headers.set("Cache-Control", "public, s-maxage=60, stale-while-revalidate=120");
+    response.headers.set("Cache-Control", "public, s-maxage=300, stale-while-revalidate=600");
     return response;
   } catch (error) {
     console.error("[PRODUCTS GET]", error);
