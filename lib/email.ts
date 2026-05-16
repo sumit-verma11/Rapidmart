@@ -127,7 +127,7 @@ export async function sendOrderConfirmation(params: SendOrderConfirmationParams)
 
             <p style="margin:0;font-size:13px;color:#555;line-height:1.6;">
               Questions? Contact us at
-              <a href="mailto:${process.env.GMAIL_USER}" style="color:#16a34a;">${process.env.GMAIL_USER}</a>
+              <a href="mailto:help@rapidmart.in" style="color:#16a34a;">help@rapidmart.in</a>
             </p>
           </td>
         </tr>

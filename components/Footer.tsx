@@ -191,11 +191,11 @@ export default function Footer() {
               </li>
               <li>
                 <a
-                  href="mailto:support@rapidmart.in"
+                  href="mailto:help@rapidmart.in"
                   className="flex items-center gap-3 text-sm text-green-200 hover:text-white transition-colors"
                 >
                   <Mail className="w-4 h-4 text-secondary shrink-0" />
-                  support@rapidmart.in
+                  help@rapidmart.in
                 </a>
               </li>
             </ul>
