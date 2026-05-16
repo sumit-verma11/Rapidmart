@@ -12,18 +12,18 @@ interface ThemeContextValue {
 }
 
 const ThemeContext = createContext<ThemeContextValue>({
-  theme: "system",
+  theme: "light",
   resolved: "light",
   setTheme: () => {},
 });
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
-  const [theme, setThemeState] = useState<Theme>("system");
+  const [theme, setThemeState] = useState<Theme>("light");
   const [resolved, setResolved] = useState<Resolved>("light");
 
-  // On mount: read saved preference
+  // On mount: read saved preference (default to light if none saved)
   useEffect(() => {
-    const saved = (localStorage.getItem("fc-theme") as Theme) || "system";
+    const saved = (localStorage.getItem("fc-theme") as Theme) || "light";
     setThemeState(saved);
   }, []);
 
