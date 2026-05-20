@@ -4,6 +4,12 @@ import { connectDB } from "@/lib/mongoose";
 import Category from "@/models/Category";
 import Product from "@/models/Product";
 import HeroSection from "./_components/HeroSection";
+import GreetingBanner from "./_components/GreetingBanner";
+import SocialProofTicker from "./_components/SocialProofTicker";
+import TrendingNow from "./_components/TrendingNow";
+import MealSection from "./_components/MealSection";
+import QuickReorder from "./_components/QuickReorder";
+import GamificationWidget from "./_components/GamificationWidget";
 import ShopSection, { CategoryItem } from "@/components/ShopSection";
 import HomepageRecentlyViewed from "@/components/HomepageRecentlyViewed";
 import FlashSaleBanner from "@/components/FlashSaleBanner";
@@ -43,11 +49,36 @@ export default async function HomePage() {
   const { categories, products, total } = await getInitialData();
 
   return (
-    <div className="bg-gray-50 dark:bg-gray-950">
+    <div className="bg-gray-50 dark:bg-gray-950 pb-6">
+      {/* Personalised greeting — logged-in users only */}
+      <GreetingBanner />
+
+      {/* Live social proof ticker */}
+      <SocialProofTicker />
+
+      {/* Main hero / offer carousel */}
       <HeroSection />
+
+      {/* Flash sale banner */}
       <FlashSaleBanner />
+
+      {/* Trending products horizontal strip */}
+      <TrendingNow />
+
+      {/* Shop by meal — recipe-based search */}
+      <MealSection />
+
+      {/* Quick reorder — returning users only */}
+      <QuickReorder />
+
+      {/* Streak + savings — logged-in users only */}
+      <GamificationWidget />
+
+      {/* Recently viewed */}
       <HomepageRecentlyViewed />
-      <div id="shop">
+
+      {/* Main product grid */}
+      <div id="shop" className="mt-4">
         <ShopSection
           initialCategories={categories}
           initialProducts={products}

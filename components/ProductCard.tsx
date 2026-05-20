@@ -232,15 +232,27 @@ export default function ProductCard({
             <span className="text-[10px] text-red-500 font-bold">⚡ {countdown}</span>
           )}
 
+          {/* Stock urgency */}
+          {!isOOS && product.stockQty <= 10 && (
+            <span className={`text-[10px] font-bold ${product.stockQty <= 3 ? "text-red-500" : "text-orange-500"}`}>
+              {product.stockQty <= 3 ? `⚡ Only ${product.stockQty} left!` : `Only ${product.stockQty} left`}
+            </span>
+          )}
+
           {/* Price + Add button */}
           <div className="flex items-center justify-between gap-2 mt-auto pt-1">
             <div>
               <span className="text-base font-black text-gray-900 dark:text-white leading-none">
                 {formatPrice(displayPrice)}
               </span>
-              {v && v.sellingPrice < v.mrp && (
+              {v && v.mrp > displayPrice && (
                 <span className="block text-[11px] text-gray-400 line-through leading-none mt-0.5">
                   {formatPrice(v.mrp)}
+                </span>
+              )}
+              {v && v.mrp > displayPrice && (
+                <span className="inline-block text-[10px] font-black text-emerald-600 dark:text-emerald-400 mt-0.5">
+                  Saves {formatPrice(v.mrp - displayPrice)}
                 </span>
               )}
             </div>
