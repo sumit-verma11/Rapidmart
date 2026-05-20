@@ -50,6 +50,94 @@ const CATEGORY_EMOJI: Record<string, string> = {
   "Meat & Seafood":      "🐟",
 };
 
+// Color palette per category — [activeBg, activeText, inactiveBg, inactiveText, dot]
+const CATEGORY_COLORS: Record<string, [string, string, string, string, string]> = {
+  "Fresh Fruits":        ["bg-orange-500",  "text-white", "bg-orange-50  dark:bg-orange-950/40", "text-orange-700 dark:text-orange-300", "bg-orange-400"],
+  "Fresh Vegetables":    ["bg-emerald-500", "text-white", "bg-emerald-50 dark:bg-emerald-950/40","text-emerald-700 dark:text-emerald-300","bg-emerald-400"],
+  "Herbs & Seasonings":  ["bg-lime-500",    "text-white", "bg-lime-50    dark:bg-lime-950/40",   "text-lime-700 dark:text-lime-300",    "bg-lime-400"],
+  "Milk":                ["bg-sky-500",     "text-white", "bg-sky-50     dark:bg-sky-950/40",    "text-sky-700 dark:text-sky-300",      "bg-sky-400"],
+  "Paneer & Tofu":       ["bg-yellow-500",  "text-white", "bg-yellow-50  dark:bg-yellow-950/40", "text-yellow-700 dark:text-yellow-300","bg-yellow-400"],
+  "Curd & Buttermilk":   ["bg-cyan-500",    "text-white", "bg-cyan-50    dark:bg-cyan-950/40",   "text-cyan-700 dark:text-cyan-300",    "bg-cyan-400"],
+  "Butter & Cheese":     ["bg-amber-500",   "text-white", "bg-amber-50   dark:bg-amber-950/40",  "text-amber-700 dark:text-amber-300",  "bg-amber-400"],
+  "Eggs":                ["bg-yellow-600",  "text-white", "bg-yellow-50  dark:bg-yellow-950/40", "text-yellow-700 dark:text-yellow-300","bg-yellow-500"],
+  "Breads":              ["bg-amber-600",   "text-white", "bg-amber-50   dark:bg-amber-950/40",  "text-amber-700 dark:text-amber-300",  "bg-amber-500"],
+  "Cakes & Pastries":    ["bg-pink-500",    "text-white", "bg-pink-50    dark:bg-pink-950/40",   "text-pink-700 dark:text-pink-300",    "bg-pink-400"],
+  "Biscuits & Cookies":  ["bg-rose-500",    "text-white", "bg-rose-50    dark:bg-rose-950/40",   "text-rose-700 dark:text-rose-300",    "bg-rose-400"],
+  "Juices":              ["bg-orange-500",  "text-white", "bg-orange-50  dark:bg-orange-950/40", "text-orange-700 dark:text-orange-300","bg-orange-400"],
+  "Cold Drinks":         ["bg-blue-500",    "text-white", "bg-blue-50    dark:bg-blue-950/40",   "text-blue-700 dark:text-blue-300",    "bg-blue-400"],
+  "Tea & Coffee":        ["bg-stone-600",   "text-white", "bg-stone-50   dark:bg-stone-950/40",  "text-stone-700 dark:text-stone-300",  "bg-stone-500"],
+  "Water & Soda":        ["bg-teal-500",    "text-white", "bg-teal-50    dark:bg-teal-950/40",   "text-teal-700 dark:text-teal-300",    "bg-teal-400"],
+  "Chips & Namkeen":     ["bg-red-500",     "text-white", "bg-red-50     dark:bg-red-950/40",    "text-red-700 dark:text-red-300",      "bg-red-400"],
+  "Instant Noodles":     ["bg-yellow-500",  "text-white", "bg-yellow-50  dark:bg-yellow-950/40", "text-yellow-700 dark:text-yellow-300","bg-yellow-400"],
+  "Ready to Eat":        ["bg-violet-500",  "text-white", "bg-violet-50  dark:bg-violet-950/40", "text-violet-700 dark:text-violet-300","bg-violet-400"],
+  "Chicken":             ["bg-orange-600",  "text-white", "bg-orange-50  dark:bg-orange-950/40", "text-orange-700 dark:text-orange-300","bg-orange-500"],
+  "Fish":                ["bg-blue-600",    "text-white", "bg-blue-50    dark:bg-blue-950/40",   "text-blue-700 dark:text-blue-300",    "bg-blue-500"],
+  "Grains & Staples":    ["bg-amber-700",   "text-white", "bg-amber-50   dark:bg-amber-950/40",  "text-amber-700 dark:text-amber-300",  "bg-amber-600"],
+  "Dry Fruits":          ["bg-brown-600",   "text-white", "bg-amber-50   dark:bg-amber-950/40",  "text-amber-800 dark:text-amber-300",  "bg-amber-600"],
+  "Pantry":              ["bg-gray-600",    "text-white", "bg-gray-100   dark:bg-gray-800",      "text-gray-700 dark:text-gray-300",    "bg-gray-500"],
+};
+
+const DEFAULT_CHIP_COLORS: [string, string, string, string, string] = [
+  "bg-primary", "text-white", "bg-gray-100 dark:bg-gray-800", "text-gray-700 dark:text-gray-300", "bg-primary",
+];
+
+// ─── Category Chip Strip ───────────────────────────────────────────────────────
+
+function CategoryChipStrip({
+  categories,
+  activeId,
+  onSelect,
+}: {
+  categories: CategoryItem[];
+  activeId:   string;
+  onSelect:   (id: string) => void;
+}) {
+  return (
+    <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide -mx-1 px-1 mb-4">
+      {/* All chip */}
+      <button
+        onClick={() => onSelect("")}
+        className={`shrink-0 flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-bold
+                    transition-all duration-200 cursor-pointer whitespace-nowrap
+                    ${!activeId
+                      ? "bg-gray-900 dark:bg-white text-white dark:text-gray-900 shadow-md"
+                      : "bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700"
+                    }`}
+      >
+        <span className="text-sm leading-none">🛒</span>
+        All
+      </button>
+
+      {categories.map((cat) => {
+        const isActive = activeId === cat._id;
+        const [activeBg, activeText, inactiveBg, inactiveText] = CATEGORY_COLORS[cat.name] ?? DEFAULT_CHIP_COLORS;
+        return (
+          <motion.button
+            key={cat._id}
+            onClick={() => onSelect(isActive ? "" : cat._id)}
+            whileTap={{ scale: 0.93 }}
+            className={`shrink-0 flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-bold
+                        transition-all duration-200 cursor-pointer whitespace-nowrap
+                        ${isActive
+                          ? `${activeBg} ${activeText} shadow-md`
+                          : `${inactiveBg} ${inactiveText} hover:opacity-90`
+                        }`}
+          >
+            {cat.image ? (
+              <span className="w-4 h-4 rounded-full overflow-hidden shrink-0 relative">
+                <Image src={cat.image} alt="" fill sizes="16px" className="object-cover" />
+              </span>
+            ) : (
+              <span className="text-sm leading-none">{CATEGORY_EMOJI[cat.name] ?? "🛒"}</span>
+            )}
+            {cat.name}
+          </motion.button>
+        );
+      })}
+    </div>
+  );
+}
+
 // Curated Unsplash images per category name (fallback when DB has no image)
 const CATEGORY_IMAGES: Record<string, string> = {
   "Fresh Fruits":        "https://images.unsplash.com/photo-1610832958506-aa56368176cf?w=600&q=80",
@@ -567,6 +655,13 @@ export default function ShopSection({ initialCategories, initialProducts = [], i
           )}
         </div>
       )}
+
+      {/* ── Category chip strip ─────────────────────────────────────────────── */}
+      <CategoryChipStrip
+        categories={orderedCategories}
+        activeId={filters.category}
+        onSelect={(id) => { updateFilter({ category: id, subcategory: "" }); }}
+      />
 
       {/* Section header + mobile filter button */}
       <div className="flex items-center justify-between mb-3">

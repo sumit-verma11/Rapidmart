@@ -14,7 +14,13 @@ import { trackAddToCart, trackWishlistAdd, trackWishlistRemove } from "@/lib/ana
 import toast from "react-hot-toast";
 import { haptic } from "@/lib/haptics";
 
-export default function ProductCard({ product, priority = false }: { product: IProduct; priority?: boolean }) {
+export default function ProductCard({
+  product,
+  priority = false,
+}: {
+  product: IProduct;
+  priority?: boolean;
+}) {
   const { items, addItem, updateQuantity } = useCartStore();
   const { toggle, has } = useWishlistStore();
   const { hasOrdered } = useUserActivity();
@@ -38,8 +44,9 @@ export default function ProductCard({ product, priority = false }: { product: IP
     ? Math.round((1 - flashPrice / v.mrp) * 100)
     : discount;
 
-  const [imgError, setImgError] = useState(false);
+  const [imgError, setImgError]   = useState(false);
   const [countdown, setCountdown] = useState<string | null>(null);
+
   useEffect(() => {
     if (!flashActive || !flashEndsAt) return;
     const tick = () => {
@@ -63,56 +70,71 @@ export default function ProductCard({ product, priority = false }: { product: IP
     e.preventDefault(); e.stopPropagation();
     if (isOOS || !v) return;
     haptic(50);
-    addItem({ productId: pid, variantSku: v.sku, name: product.name,
+    addItem({
+      productId: pid, variantSku: v.sku, name: product.name,
       image: product.images[0] ?? "/placeholder.png",
       unit: `${v.size}${v.unit}`, mrp: v.mrp, sellingPrice: flashPrice,
-      quantity: 1, stock: product.stockQty });
+      quantity: 1, stock: product.stockQty,
+    });
     if (qty === 0) {
-      toast.success(`Added to cart!`);
+      toast.success("Added to cart!");
       trackAddToCart(pid, product.name, v.sellingPrice, 1);
-      fetch("/api/events", { method: "POST", headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ productId: pid, event: "cart" }) }).catch(() => {});
+      fetch("/api/events", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ productId: pid, event: "cart" }),
+      }).catch(() => {});
     }
   }
+
   function handleDec(e: React.MouseEvent) {
     e.preventDefault(); e.stopPropagation();
     updateQuantity(pid, qty - 1);
   }
+
   function handleWishlist(e: React.MouseEvent) {
     e.preventDefault(); e.stopPropagation();
-    toggle({ productId: pid, name: product.name, image: product.images[0] ?? "/placeholder.png",
-      slug: product.slug, price: v?.sellingPrice ?? 0, mrp: v?.mrp ?? 0 });
+    toggle({
+      productId: pid, name: product.name,
+      image: product.images[0] ?? "/placeholder.png",
+      slug: product.slug, price: v?.sellingPrice ?? 0, mrp: v?.mrp ?? 0,
+    });
     if (isWishlisted) { toast("Removed from wishlist"); trackWishlistRemove(pid, product.name); }
-    else { toast.success("Added to wishlist!"); trackWishlistAdd(pid, product.name); }
+    else              { toast.success("Added to wishlist!"); trackWishlistAdd(pid, product.name); }
   }
 
   return (
     <Link href={`/products/${product.slug}`} className="block group">
       <motion.article
-        whileHover={{ y: -3 }}
+        whileHover={{ y: -2 }}
         transition={{ type: "spring", stiffness: 400, damping: 30 }}
         className="relative flex flex-col overflow-hidden rounded-2xl h-full
                    bg-white dark:bg-gray-900
                    border border-gray-100 dark:border-gray-800
-                   shadow-sm hover:shadow-lg dark:hover:shadow-black/30
+                   shadow-sm hover:shadow-xl dark:hover:shadow-black/40
                    transition-shadow duration-200"
       >
-        {/* ── Image area ─────────────────────────────── */}
-        <div className="relative bg-gray-50 dark:bg-gray-800 overflow-hidden">
-          {/* Delivery time badge — Blinkit style */}
+        {/* ── Image ───────────────────────────────────────────── */}
+        <div className="relative overflow-hidden bg-gray-50 dark:bg-gray-800">
+
+          {/* Delivery badge */}
           <div className="absolute top-2 left-2 z-10 flex items-center gap-1
-                          bg-white dark:bg-gray-900 rounded-lg px-1.5 py-0.5 shadow-sm
-                          border border-gray-100 dark:border-gray-700">
+                          bg-white/90 dark:bg-gray-900/90 backdrop-blur-sm
+                          rounded-lg px-1.5 py-0.5 shadow-sm border border-gray-100 dark:border-gray-700">
             <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-            <span className="text-[10px] font-black text-gray-700 dark:text-gray-300">8 MINS</span>
+            <span className="text-[9px] font-black text-gray-700 dark:text-gray-300 tracking-wide">10 MIN</span>
           </div>
 
-          {/* Discount badge */}
+          {/* Discount / flash badge */}
           {showDiscount && (
             <div className="absolute top-2 right-2 z-10">
               {flashActive ? (
-                <motion.div animate={{ scale: [1, 1.06, 1] }} transition={{ duration: 1.2, repeat: Infinity }}
-                  className="flex items-center gap-0.5 bg-red-500 text-white text-[10px] font-black px-1.5 py-0.5 rounded-lg">
+                <motion.div
+                  animate={{ scale: [1, 1.07, 1] }}
+                  transition={{ duration: 1.2, repeat: Infinity }}
+                  className="flex items-center gap-0.5 bg-red-500 text-white
+                             text-[10px] font-black px-1.5 py-0.5 rounded-lg"
+                >
                   <Zap className="w-2.5 h-2.5" />{discountPct}%
                 </motion.div>
               ) : (
@@ -123,7 +145,7 @@ export default function ProductCard({ product, priority = false }: { product: IP
             </div>
           )}
 
-          {/* Organic badge */}
+          {/* Organic badge (only when no discount) */}
           {product.isOrganic && !showDiscount && (
             <div className="absolute top-2 right-2 z-10 flex items-center gap-0.5
                             bg-emerald-50 dark:bg-emerald-900/50 border border-emerald-200 dark:border-emerald-700
@@ -133,19 +155,25 @@ export default function ProductCard({ product, priority = false }: { product: IP
           )}
 
           {/* Wishlist */}
-          <motion.button onClick={handleWishlist} whileTap={{ scale: 0.7 }}
+          <motion.button
+            onClick={handleWishlist}
+            whileTap={{ scale: 0.7 }}
+            aria-label="Wishlist"
             className="absolute bottom-2 right-2 z-10 w-7 h-7 rounded-full
                        bg-white dark:bg-gray-800 shadow-md flex items-center justify-center
-                       border border-gray-100 dark:border-gray-700"
-            aria-label="Wishlist">
+                       border border-gray-100 dark:border-gray-700 cursor-pointer"
+          >
             <Heart className={`w-3.5 h-3.5 ${isWishlisted ? "fill-red-500 text-red-500" : "text-gray-300 dark:text-gray-500"}`} />
           </motion.button>
 
-          {/* Product image */}
+          {/* Product image — full-bleed, object-cover */}
           <div className="aspect-square relative">
             {product.images[0] && !imgError ? (
-              <Image src={product.images[0]} alt={product.name} fill
-                className="object-contain p-4 transition-transform duration-400 group-hover:scale-105"
+              <Image
+                src={product.images[0]}
+                alt={product.name}
+                fill
+                className="object-contain p-3 transition-transform duration-300 group-hover:scale-105"
                 sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 20vw"
                 priority={priority}
                 onError={() => setImgError(true)}
@@ -157,20 +185,23 @@ export default function ProductCard({ product, priority = false }: { product: IP
 
           {/* OOS overlay */}
           {isOOS && (
-            <div className="absolute inset-0 z-20 flex items-center justify-center bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm">
-              <span className="text-xs font-bold text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-gray-800 px-3 py-1.5 rounded-full border border-gray-200 dark:border-gray-700">
+            <div className="absolute inset-0 z-20 flex items-center justify-center
+                            bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm">
+              <span className="text-xs font-bold text-gray-500 dark:text-gray-400
+                               bg-gray-100 dark:bg-gray-800 px-3 py-1.5 rounded-full
+                               border border-gray-200 dark:border-gray-700">
                 Out of Stock
               </span>
             </div>
           )}
         </div>
 
-        {/* ── Info area ──────────────────────────────── */}
-        <div className="flex flex-col flex-1 p-3 gap-2">
+        {/* ── Info ────────────────────────────────────────────── */}
+        <div className="flex flex-col flex-1 px-3 pt-2.5 pb-3 gap-1.5">
 
           {/* Category */}
           {categoryName && (
-            <p className="text-[10px] uppercase tracking-wider font-bold text-gray-400 dark:text-gray-500 truncate">
+            <p className="text-[9px] uppercase tracking-widest font-bold text-gray-400 dark:text-gray-500 truncate">
               {categoryName}
             </p>
           )}
@@ -181,74 +212,96 @@ export default function ProductCard({ product, priority = false }: { product: IP
             {product.name}
           </h3>
 
-          {/* Size */}
-          {v && (
-            <p className="text-xs text-gray-400 dark:text-gray-500">{v.size}{v.unit}</p>
+          {/* Size + reorder */}
+          <div className="flex items-center gap-1.5 flex-wrap">
+            {v && (
+              <span className="text-[11px] text-gray-400 dark:text-gray-500 bg-gray-100 dark:bg-gray-800
+                               px-1.5 py-0.5 rounded-md font-medium">
+                {v.size}{v.unit}
+              </span>
+            )}
+            {hasOrdered(pid) && (
+              <span className="text-[9px] font-bold text-emerald-600 dark:text-emerald-400">
+                ✓ Ordered
+              </span>
+            )}
+          </div>
+
+          {/* Flash countdown */}
+          {flashActive && countdown && (
+            <span className="text-[10px] text-red-500 font-bold">⚡ {countdown}</span>
           )}
 
-          {/* Reorder chip */}
-          {hasOrdered(pid) && (
-            <p className="text-[10px] font-bold text-emerald-600 dark:text-emerald-400">✓ Ordered before</p>
-          )}
-
-          {/* Price + Add button — Blinkit style */}
-          <div className="flex items-end justify-between gap-2 pt-1 mt-auto">
-            <div className="flex flex-col">
+          {/* Price + Add button */}
+          <div className="flex items-center justify-between gap-2 mt-auto pt-1">
+            <div>
               <span className="text-base font-black text-gray-900 dark:text-white leading-none">
                 {formatPrice(displayPrice)}
               </span>
               {v && v.sellingPrice < v.mrp && (
-                <span className="text-[11px] text-gray-400 line-through mt-0.5">
+                <span className="block text-[11px] text-gray-400 line-through leading-none mt-0.5">
                   {formatPrice(v.mrp)}
                 </span>
-              )}
-              {flashActive && countdown && (
-                <span className="text-[10px] text-red-500 font-bold mt-0.5">⚡ {countdown}</span>
               )}
             </div>
 
             {/* Add / qty control */}
             <AnimatePresence mode="wait" initial={false}>
               {qty > 0 ? (
-                <motion.div key="qty"
+                <motion.div
+                  key="qty"
                   initial={{ scale: 0.85, opacity: 0 }}
-                  animate={{ scale: 1, opacity: 1 }}
-                  exit={{ scale: 0.85, opacity: 0 }}
+                  animate={{ scale: 1,    opacity: 1 }}
+                  exit={{    scale: 0.85, opacity: 0 }}
                   transition={{ type: "spring", stiffness: 500, damping: 30 }}
-                  className="flex items-center gap-0 rounded-xl overflow-hidden shrink-0
+                  className="flex items-center rounded-xl overflow-hidden shrink-0
                              border-2 border-emerald-500 dark:border-emerald-600"
-                  onClick={e => e.preventDefault()}>
-                  <button onClick={handleDec} aria-label="Remove"
-                    className="w-8 h-8 flex items-center justify-center
-                               text-emerald-600 dark:text-emerald-400
-                               hover:bg-emerald-50 dark:hover:bg-emerald-950/40 transition-colors">
+                  onClick={e => e.preventDefault()}
+                >
+                  <button
+                    onClick={handleDec}
+                    aria-label="Remove"
+                    className="w-8 h-8 flex items-center justify-center text-emerald-600 dark:text-emerald-400
+                               hover:bg-emerald-50 dark:hover:bg-emerald-950/40 transition-colors cursor-pointer"
+                  >
                     <Minus className="w-3.5 h-3.5" />
                   </button>
-                  <span className="w-6 text-center text-sm font-black text-gray-900 dark:text-white">{qty}</span>
-                  <button onClick={handleAdd} disabled={qty >= product.stockQty} aria-label="Add"
+                  <span className="w-6 text-center text-sm font-black text-gray-900 dark:text-white">
+                    {qty}
+                  </span>
+                  <button
+                    onClick={handleAdd}
+                    disabled={qty >= product.stockQty}
+                    aria-label="Add"
                     className="w-8 h-8 flex items-center justify-center
                                bg-emerald-500 dark:bg-emerald-600 text-white
                                hover:bg-emerald-400 dark:hover:bg-emerald-500 transition-colors
-                               disabled:opacity-40">
+                               disabled:opacity-40 cursor-pointer"
+                  >
                     <Plus className="w-3.5 h-3.5" />
                   </button>
                 </motion.div>
               ) : (
-                <motion.button key="add"
+                <motion.button
+                  key="add"
                   initial={{ scale: 0.85, opacity: 0 }}
-                  animate={{ scale: 1, opacity: 1 }}
-                  exit={{ scale: 0.85, opacity: 0 }}
+                  animate={{ scale: 1,    opacity: 1 }}
+                  exit={{    scale: 0.85, opacity: 0 }}
                   transition={{ type: "spring", stiffness: 500, damping: 30 }}
-                  whileTap={{ scale: 0.85 }}
-                  onClick={handleAdd} disabled={isOOS}
-                  className="w-9 h-9 rounded-xl bg-emerald-500 hover:bg-emerald-400
-                             dark:bg-emerald-600 dark:hover:bg-emerald-500 text-white
-                             flex items-center justify-center shrink-0
-                             shadow-md shadow-emerald-500/20 dark:shadow-emerald-900/40
+                  whileTap={{ scale: 0.88 }}
+                  onClick={handleAdd}
+                  disabled={isOOS}
+                  aria-label="Add to cart"
+                  className="flex items-center gap-1 px-3 h-9 rounded-xl shrink-0
+                             bg-emerald-500 hover:bg-emerald-400
+                             dark:bg-emerald-600 dark:hover:bg-emerald-500
+                             text-white font-black text-xs
+                             shadow-md shadow-emerald-500/25 dark:shadow-emerald-900/40
                              disabled:opacity-40 disabled:cursor-not-allowed
-                             transition-colors duration-150"
-                  aria-label="Add to cart">
-                  <Plus className="w-4 h-4" />
+                             transition-colors duration-150 cursor-pointer"
+                >
+                  <Plus className="w-3.5 h-3.5" />
+                  ADD
                 </motion.button>
               )}
             </AnimatePresence>
