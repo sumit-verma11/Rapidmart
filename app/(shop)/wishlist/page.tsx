@@ -68,7 +68,7 @@ export default function WishlistPage() {
         {items.map((item) => (
           <div key={item.productId} className="card overflow-hidden flex flex-col">
             {/* Image */}
-            <Link href={`/product/${item.slug}`} className="block">
+            <Link href={`/products/${item.slug}`} className="block">
               <div className="relative aspect-square bg-accent">
                 <Image
                   src={item.image}
@@ -82,7 +82,7 @@ export default function WishlistPage() {
 
             {/* Info */}
             <div className="p-3 flex flex-col flex-1 gap-2">
-              <Link href={`/product/${item.slug}`}>
+              <Link href={`/products/${item.slug}`}>
                 <h3 className="text-sm font-semibold text-dark line-clamp-2 hover:text-primary transition-colors">
                   {item.name}
                 </h3>

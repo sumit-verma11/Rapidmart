@@ -300,7 +300,7 @@ export default function Navbar() {
                           return (
                             <Link
                               key={product._id.toString()}
-                              href={`/product/${product.slug}`}
+                              href={`/products/${product.slug}`}
                               onClick={() => { setSearchOpen(false); setSearchInput(""); }}
                               className="flex items-center gap-3 px-4 py-3 hover:bg-accent dark:hover:bg-gray-800 transition-colors"
                             >
