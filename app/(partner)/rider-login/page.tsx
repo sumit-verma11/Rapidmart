@@ -5,6 +5,7 @@ import { signIn, getSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Eye, EyeOff, Mail, Lock, ArrowRight, Bike, ChevronLeft } from "lucide-react";
+import Image from "next/image";
 import toast from "react-hot-toast";
 
 function RiderLoginForm() {
@@ -61,8 +62,9 @@ function RiderLoginForm() {
 
         {/* Logo / title */}
         <div className="flex flex-col items-center mb-7">
-          <div className="w-16 h-16 rounded-2xl bg-white/20 flex items-center justify-center mb-4 shadow-lg">
-            <Bike className="w-8 h-8 text-white" />
+          <Image src="/logo.png" alt="RapidMart" width={160} height={80} className="h-10 w-auto object-contain mb-4 brightness-0 invert" />
+          <div className="w-14 h-14 rounded-2xl bg-white/20 flex items-center justify-center mb-3 shadow-lg">
+            <Bike className="w-7 h-7 text-white" />
           </div>
           <h1 className="text-2xl font-extrabold text-white">Delivery Partner</h1>
           <p className="text-green-200 text-sm mt-1">RapidMart Partner Portal</p>

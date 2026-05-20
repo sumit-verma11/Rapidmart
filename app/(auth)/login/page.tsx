@@ -4,7 +4,8 @@ import { Suspense, useState } from "react";
 import { signIn, getSession } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
-import { Eye, EyeOff, Mail, Lock, ArrowRight, Leaf, Bike } from "lucide-react";
+import { Eye, EyeOff, Mail, Lock, ArrowRight, Bike } from "lucide-react";
+import Image from "next/image";
 import toast from "react-hot-toast";
 
 
@@ -63,13 +64,8 @@ function LoginForm() {
 
         {/* Logo */}
         <div className="flex justify-center mb-6">
-          <Link href="/" className="flex items-center gap-2">
-            <span className="rounded-xl p-2 bg-primary">
-              <Leaf className="w-5 h-5 text-white" />
-            </span>
-            <span className="text-xl font-extrabold text-dark">
-              Rapid<span className="text-primary">Mart</span>
-            </span>
+          <Link href="/">
+            <Image src="/logo.png" alt="RapidMart" width={160} height={80} className="h-12 w-auto object-contain" />
           </Link>
         </div>
 

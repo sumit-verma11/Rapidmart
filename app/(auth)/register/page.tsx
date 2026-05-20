@@ -4,7 +4,8 @@ import { useState } from "react";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { Eye, EyeOff, Mail, Lock, User, Phone, ArrowRight, Leaf, CheckCircle2, XCircle } from "lucide-react";
+import { Eye, EyeOff, Mail, Lock, User, Phone, ArrowRight, CheckCircle2, XCircle } from "lucide-react";
+import Image from "next/image";
 import toast from "react-hot-toast";
 
 // ─── Client-side validation rules (mirrors the Zod registerSchema) ────────────
@@ -111,13 +112,8 @@ export default function RegisterPage() {
 
         {/* ── Logo ────────────────────────────────────────────────────────── */}
         <div className="flex justify-center mb-8">
-          <Link href="/" className="flex items-center gap-2">
-            <span className="bg-primary rounded-xl p-2">
-              <Leaf className="w-5 h-5 text-white" />
-            </span>
-            <span className="text-xl font-extrabold text-dark">
-              Fresh<span className="text-primary">Cart</span>
-            </span>
+          <Link href="/">
+            <Image src="/logo.png" alt="RapidMart" width={160} height={80} className="h-12 w-auto object-contain" />
           </Link>
         </div>
 
